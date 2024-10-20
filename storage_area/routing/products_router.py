@@ -12,28 +12,29 @@ router = APIRouter(
 @router.post("/", response_model=SProduct)
 async def create_product(product: SProductAdd = Depends(), product_service: ProductService = Depends(get_product_service)):
     data = product.model_dump()
-    new_product = await product_service.create_product(data)
+    new_product = await product_service.create(data)
     return SProduct.model_validate(new_product)
 
 
 @router.get("/", response_model=list[SProduct])
 async def get_all_products(product_service: ProductService = Depends(get_product_service)):
-   products = await product_service.get_all_products()
+   products = await product_service.get_all()
    return [SProduct.model_validate(product) for product in products]
 
 
 @router.get("{id}", response_model=SProduct)
 async def get_product_by_id(id, product_service: ProductService = Depends(get_product_service)):
-    product = await product_service.get_product_by_id(id=id)
+    product = await product_service.get_by_id(id=id)
     return SProduct.model_validate(product)
 
 @router.put("{id}", response_model=SProduct)
 async def update_product_by_id(id, product: SProductUpdate = Depends(), product_service: ProductService = Depends(get_product_service)):
     data = product.model_dump()
-    product_to_update = await product_service.update_product_by_id(id=id, data=data)
+    product_to_update = await product_service.update_by_id(id=id, data=data)
     return SProduct.model_validate(product_to_update)
 
 
 @router.delete("{id}")
-async def delete_product_by_id(id, product_service: ProductService = Depends(get_product_service)) -> None:
-    await product_service.delete_product_by_id(id=id)
+async def delete_product_by_id(id, product_service: ProductService = Depends(get_product_service)):
+    await product_service.delete_by_id(id=id)
+    return {"Done": True}
