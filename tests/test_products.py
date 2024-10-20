@@ -2,7 +2,7 @@ import pytest
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from storage_area.models import ProductModel
-from storage_area.repositories.product_repository import ProductRepository
+from storage_area.repositories.products import ProductRepository
 
 
 class TestProduct:

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
-from storage_area.database import create_tables, delete_tables
+from storage_area.database.database import create_tables, delete_tables
 from storage_area.routing.products_router import router as products_router
 
 
@@ -15,8 +15,3 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(products_router)
-
-
-@app.get('/')
-async def root():
-    return {'text': 'my first fastapi app'}

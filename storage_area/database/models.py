@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Numeric, func, ForeignKey
 from datetime import datetime
-from storage_area.database import BaseModel
+from storage_area.database.database import BaseModel
 
 
 class ProductModel(BaseModel):

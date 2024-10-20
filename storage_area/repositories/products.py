@@ -1,36 +1,33 @@
-from storage_area.models import ProductModel
-from storage_area.database import new_session
+from storage_area.database.models import ProductModel
+from storage_area.database.database import new_session
 from sqlalchemy import select
-from storage_area.schemas import SProductAdd, SProduct, SProductId, SProductUpdate
 
 
 class ProductRepository:
     @classmethod
-    async def create_product(cls, product: SProductAdd) -> int:
+    async def create_product(cls, data: dict) -> ProductModel:
         async with new_session() as session:
-            data = product.model_dump()
             new_product = ProductModel(**data)
             session.add(new_product)
             await session.flush()
             await session.commit()
-            return SProductId.model_validate(new_product).id
+            return new_product
 
     @classmethod
-    async def get_all_products(cls) -> list[SProduct]:
+    async def get_all_products(cls) -> list[ProductModel]:
         async with new_session() as session:
             query = select(ProductModel)
             result = await session.execute(query)
             product_models = result.scalars().all()
-            products = [SProduct.model_validate(task_model) for task_model in product_models]
-            return products
+            return product_models
 
     @classmethod
-    async def get_product_by_id(cls, id_: int) -> SProduct | None:
+    async def get_product_by_id(cls, id_: int) -> ProductModel | None:
         async with new_session() as session:
             product = await session.get(ProductModel, id_)
             if product is None:
                 return None
-            return SProduct.model_validate(product)
+            return product
 
     @classmethod
     async def delete_product_by_id(cls, id_: int) -> None:
@@ -41,14 +38,14 @@ class ProductRepository:
                 await session.commit()
 
     @classmethod
-    async def update_product_by_id(cls, id_, product: SProductUpdate) -> SProduct:
+    async def update_product_by_id(cls, id_, data: dict) -> ProductModel:
         async with new_session() as session:
-            data = product.model_dump()
-            update_prod = await session.get(ProductModel, id_)
+            data = {**data}
+            prod_to_update = await session.get(ProductModel, id_)
             for field, value in data.items():
                 if value:
-                    setattr(update_prod, field, data[field])
-            session.add(update_prod)
+                    setattr(prod_to_update, field, data[field])
+            session.add(prod_to_update)
             await session.commit()
-            await session.refresh(update_prod)
-            return SProduct.model_validate(update_prod)
+            await session.refresh(prod_to_update)
+            return prod_to_update
