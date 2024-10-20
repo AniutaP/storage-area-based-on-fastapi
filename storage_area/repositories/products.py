@@ -22,26 +22,27 @@ class ProductRepository:
             return products
 
     @classmethod
-    async def get_product_by_id(cls, id_: int) -> ProductModel | None:
+    async def get_product_by_id(cls, id: int) -> ProductModel | None:
         async with new_session() as session:
-            product = await session.get(ProductModel, id_)
+            product = await session.get(ProductModel, id)
             if product is None:
                 return None
             return product
 
     @classmethod
-    async def delete_product_by_id(cls, id_: int) -> None:
+    async def delete_product_by_id(cls, id: int) -> None:
         async with new_session() as session:
-            product_to_delete = await session.get(ProductModel, id_)
+            product_to_delete = await session.get(ProductModel, id)
+            print(product_to_delete)
             if product_to_delete:
                 await session.delete(product_to_delete)
                 await session.commit()
 
     @classmethod
-    async def update_product_by_id(cls, id_, data: dict) -> ProductModel:
+    async def update_product_by_id(cls, id, data: dict) -> ProductModel:
         async with new_session() as session:
             data = {**data}
-            product_to_update = await session.get(ProductModel, id_)
+            product_to_update = await session.get(ProductModel, id)
             for field, value in data.items():
                 if value:
                     setattr(product_to_update, field, data[field])
