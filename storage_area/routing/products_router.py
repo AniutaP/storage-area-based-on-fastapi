@@ -30,8 +30,8 @@ async def get_product_by_id(id, product_service: ProductService = Depends(get_pr
 @router.put("{id}", response_model=SProduct)
 async def update_product_by_id(id, product: SProductUpdate = Depends(), product_service: ProductService = Depends(get_product_service)):
     data = product.model_dump()
-    prod_to_update = await product_service.repository.update_product_by_id(id_=id, data=data)
-    return SProduct.model_validate(prod_to_update)
+    product_to_update = await product_service.repository.update_product_by_id(id_=id, data=data)
+    return SProduct.model_validate(product_to_update)
 
 
 @router.delete("{id}")

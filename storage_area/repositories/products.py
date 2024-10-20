@@ -18,8 +18,8 @@ class ProductRepository:
         async with new_session() as session:
             query = select(ProductModel)
             result = await session.execute(query)
-            product_models = result.scalars().all()
-            return product_models
+            products = result.scalars().all()
+            return products
 
     @classmethod
     async def get_product_by_id(cls, id_: int) -> ProductModel | None:
@@ -41,11 +41,11 @@ class ProductRepository:
     async def update_product_by_id(cls, id_, data: dict) -> ProductModel:
         async with new_session() as session:
             data = {**data}
-            prod_to_update = await session.get(ProductModel, id_)
+            product_to_update = await session.get(ProductModel, id_)
             for field, value in data.items():
                 if value:
-                    setattr(prod_to_update, field, data[field])
-            session.add(prod_to_update)
+                    setattr(product_to_update, field, data[field])
+            session.add(product_to_update)
             await session.commit()
-            await session.refresh(prod_to_update)
-            return prod_to_update
+            await session.refresh(product_to_update)
+            return product_to_update
