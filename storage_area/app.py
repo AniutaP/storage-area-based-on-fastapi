@@ -13,3 +13,8 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(get_all_routes())
+
+
+@app.get("/")
+def root():
+    return {"FastApi": "STORAGE AREA MANAGEMENT APPLICATION"}

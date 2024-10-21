@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_validator
 
 
 class SProductAdd(BaseModel):
@@ -9,11 +9,22 @@ class SProductAdd(BaseModel):
 
    model_config = ConfigDict(from_attributes=True)
 
+   @field_validator('price')
+   def check_price(cls, value):
+      if value < 0:
+         raise ValueError('Price should not be negative')
+      return value
+
+   @field_validator('quantity')
+   def check_quantity(cls, value):
+      if value < 0:
+         raise ValueError('Quantity should not be negative')
+      return value
+
 
 class SProduct(SProductAdd):
    id: int
 
-   model_config = ConfigDict(from_attributes=True)
 
 
 class SProductUpdate(BaseModel):
@@ -23,3 +34,16 @@ class SProductUpdate(BaseModel):
    quantity: int | None = None
 
    model_config = ConfigDict(from_attributes=True)
+
+   @field_validator('price')
+   def check_price(cls, value):
+      if not value or value > 0:
+         return value
+      raise ValueError('Price should not be negative')
+
+
+   @field_validator('quantity')
+   def check_quantity(cls, value):
+      if not value or value > 0:
+         return value
+      raise ValueError('Quantity should not be negative')
