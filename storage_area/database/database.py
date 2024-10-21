@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
-from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine,  AsyncSession
+from typing import AsyncGenerator
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy import exc
 import os
 from dotenv import load_dotenv
 
@@ -16,19 +16,16 @@ class BaseModel(DeclarativeBase):
 
 class DatabaseEngine:
 
-    def __init__(self, db_url: str):
-        self.engine = create_async_engine(url=db_url)
-        self.session_factory = async_sessionmaker(bind=self.engine, expire_on_commit=False)
+    def __init__(self, url: str, echo: bool):
+        self.engine = create_async_engine(url=url, echo=echo)
+        self.session_factory = async_sessionmaker(
+            bind=self.engine, autoflush=False, autocommit=False, expire_on_commit=False
+        )
 
     @asynccontextmanager
-    async def get_db_session(self):
-        session: AsyncSession = self.session_factory()
-        try:
+    async def get_db_session(self) -> AsyncGenerator:
+        async with self.session_factory() as session:
             yield session
-        except exc.SQLAlchemyError:
-            await session.rollback()
-            raise
-        finally:
             await session.close()
 
     async def create_tables(self):
@@ -40,4 +37,4 @@ class DatabaseEngine:
            await conn.run_sync(BaseModel.metadata.drop_all)
 
 
-db_engine = DatabaseEngine(DATABASE_URL)
+db_engine = DatabaseEngine(url=DATABASE_URL,echo=False)

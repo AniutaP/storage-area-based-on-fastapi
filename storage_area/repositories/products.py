@@ -1,4 +1,3 @@
-from typing import Sequence, Type
 from storage_area.database.models import ProductModel
 from sqlalchemy import select
 
@@ -16,14 +15,14 @@ class ProductRepository:
             await session.commit()
             return new_product
 
-    async def get_all(self) -> Sequence[ProductModel]:
+    async def get_all(self) -> list[ProductModel]:
         async with self._session() as session:
             query = select(ProductModel)
             result = await session.execute(query)
             products = result.scalars().all()
             return products
 
-    async def get_by_id(self,  id: int) -> Type[ProductModel] | None:
+    async def get_by_id(self,  id: int) -> ProductModel | None:
         async with self._session() as session:
             product = await session.get(ProductModel, id)
             if product is None:
@@ -37,7 +36,7 @@ class ProductRepository:
                 await session.delete(product_to_delete)
                 await session.commit()
 
-    async def update_by_id(self,  id, data: dict) -> Type[ProductModel] | None:
+    async def update_by_id(self,  id, data: dict) -> ProductModel | None:
         async with self._session() as session:
             data = {**data}
             product_to_update = await session.get(ProductModel, id)
