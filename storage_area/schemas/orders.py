@@ -25,6 +25,7 @@ class SOrderAdd(BaseModel):
 class SOrder(SOrderAdd):
     id: int
 
+
 class SOrderStatusUpdate(BaseModel):
     id: int
     status: str

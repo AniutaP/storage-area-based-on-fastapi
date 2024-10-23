@@ -40,7 +40,6 @@ class SProductUpdate(BaseModel):
          return value
       raise ValueError('Price should not be negative')
 
-
    @field_validator('quantity')
    def check_quantity(cls, value):
       if not value or value > 0:
