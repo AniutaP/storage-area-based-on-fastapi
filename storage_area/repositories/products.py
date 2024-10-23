@@ -18,8 +18,8 @@ class ProductRepository:
     async def get_all(self) -> list[ProductModel]:
         async with self._session() as session:
             query = select(ProductModel)
-            result = await session.execute(query)
-            products = result.scalars().all()
+            result = await session.scalars(query)
+            products = result.all()
             return products
 
     async def get_by_id(self,  id: int) -> ProductModel | None:

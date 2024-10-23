@@ -26,7 +26,6 @@ class SProduct(SProductAdd):
    id: int
 
 
-
 class SProductUpdate(BaseModel):
    name: str | None = None
    description: str | None = None
