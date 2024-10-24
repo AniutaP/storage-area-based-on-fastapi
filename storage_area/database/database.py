@@ -1,7 +1,8 @@
-from contextlib import asynccontextmanager
 from typing import AsyncGenerator
-from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
+from storage_area.database.sqlalchemy_base import BaseModel
+from contextlib import asynccontextmanager
+from storage_area.config import config
 import os
 from dotenv import load_dotenv
 
@@ -10,17 +11,21 @@ load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 
-class BaseModel(DeclarativeBase):
-    pass
-
-
 class DatabaseEngine:
 
-    def __init__(self, url: str, echo: bool):
-        self.engine = create_async_engine(url=url, echo=echo)
+    def __init__(self, url, echo=False):
+        self.url: str = url
+        self.echo: bool = echo
+        self.engine: AsyncEngine | None = None
+        self.session_factory: async_sessionmaker[AsyncSession] | None = None
+
+    async def connect(self) -> None:
+        self.engine = create_async_engine(url=self.url, echo=self.echo)
         self.session_factory = async_sessionmaker(
             bind=self.engine, autoflush=False, autocommit=False, expire_on_commit=False
         )
+        async with self.engine.begin() as conn:
+            await conn.run_sync(BaseModel.metadata.create_all)
 
     @asynccontextmanager
     async def get_db_session(self) -> AsyncGenerator:
@@ -28,13 +33,16 @@ class DatabaseEngine:
             yield session
             await session.close()
 
-    async def create_tables(self):
-       async with self.engine.begin() as conn:
-           await conn.run_sync(BaseModel.metadata.create_all)
-
-    async def delete_tables(self):
-       async with self.engine.begin() as conn:
-           await conn.run_sync(BaseModel.metadata.drop_all)
+    async def disconnect(self) -> None:
+        if self.engine:
+            async with self.engine.begin() as conn:
+                await conn.run_sync(BaseModel.metadata.drop_all)
+            await self.engine.dispose()
 
 
-db_engine = DatabaseEngine(url=DATABASE_URL,echo=False)
+def setup_database(url=DATABASE_URL):
+    return DatabaseEngine(url)
+
+
+# database = setup_database(url=config.database.url_create())
+database = setup_database()

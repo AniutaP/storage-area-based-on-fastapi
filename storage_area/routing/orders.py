@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from storage_area.services.orders import OrderService
-from storage_area.schemas.orders import SOrderAdd, SOrder, SOrderItem, SOrderStatusUpdate
+from storage_area.schemas.orders import SOrderAdd, SOrder, SOrderStatusUpdate
 from storage_area.depends.depends import get_order_service
 
 router = APIRouter(
