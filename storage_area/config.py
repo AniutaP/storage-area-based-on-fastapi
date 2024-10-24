@@ -33,5 +33,5 @@ class Configs(BaseSettings):
 
 
 def setup_configs():
-    config = Configs()
-    return config
+    configs = Configs()
+    return configs
