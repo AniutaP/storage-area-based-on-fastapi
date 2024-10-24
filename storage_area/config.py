@@ -1,45 +1,37 @@
-from dataclasses import dataclass
-import os
-from dotenv import load_dotenv
+from pydantic import SecretStr, PostgresDsn
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-load_dotenv()
-
-DATABASE_NAME = os.getenv('DATABASE_NAME')
-DATABASE_HOST = os.getenv('DATABASE_HOST')
-DATABASE_PORT = os.getenv('DATABASE_PORT')
-DATABASE_USER = os.getenv('DATABASE_USER')
-DATABASE_PASSWORD = os.getenv('DATABASE_PASSWORD')
-
-
-@dataclass
-class DatabaseConfig:
-    host: str
-    port: str
+class DBConfigs(BaseSettings):
+    db_name: str
     user: str
-    password: str
-    database: str
+    password: SecretStr
+    host: str
+    port: int
+    echo: bool
+    url: PostgresDsn | None = None
 
-    @property
-    def url_create(self):
-        return f'postgresql+asyncpg://{self.user}:{self.password}@{self.host}:{self.port}/{self.database}'
-
-
-@dataclass
-class Config:
-    database: DatabaseConfig | None = None
-
-
-def setup_config():
-    config = Config(
-        database=DatabaseConfig(
-            host=DATABASE_HOST,
-            port=DATABASE_PORT,
-            user=DATABASE_USER,
-            password=DATABASE_PASSWORD,
-            database=DATABASE_NAME
-        ),
+    model_config = SettingsConfigDict(
+        env_file=".env", env_file_encoding="utf8", extra="ignore"
     )
-    return config
 
-config = setup_config()
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        if not self.url:
+            self.url = PostgresDsn.build(
+                scheme="postgresql+asyncpg",
+                username=self.user,
+                password=self.password.get_secret_value(),
+                host=self.host,
+                port=self.port,
+                path=self.db_name,
+            )
+
+
+class Configs(BaseSettings):
+    db_configs: DBConfigs = DBConfigs()
+
+
+def setup_configs():
+    config = Configs()
+    return config

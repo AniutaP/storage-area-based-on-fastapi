@@ -1,8 +1,11 @@
 from typing import AsyncGenerator
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
-from storage_area.database.sqlalchemy_base import BaseModel
+from sqlalchemy.ext.asyncio import (
+    AsyncEngine,
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
 from contextlib import asynccontextmanager
-from storage_area.config import config
 import os
 from dotenv import load_dotenv
 
@@ -13,7 +16,7 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 
 class DatabaseEngine:
 
-    def __init__(self, url, echo=False):
+    def __init__(self, url: str, echo: bool):
         self.url: str = url
         self.echo: bool = echo
         self.engine: AsyncEngine | None = None
@@ -24,8 +27,6 @@ class DatabaseEngine:
         self.session_factory = async_sessionmaker(
             bind=self.engine, autoflush=False, autocommit=False, expire_on_commit=False
         )
-        async with self.engine.begin() as conn:
-            await conn.run_sync(BaseModel.metadata.create_all)
 
     @asynccontextmanager
     async def get_db_session(self) -> AsyncGenerator:
@@ -35,14 +36,8 @@ class DatabaseEngine:
 
     async def disconnect(self) -> None:
         if self.engine:
-            async with self.engine.begin() as conn:
-                await conn.run_sync(BaseModel.metadata.drop_all)
             await self.engine.dispose()
 
 
-def setup_database(url=DATABASE_URL):
-    return DatabaseEngine(url)
-
-
-# database = setup_database(url=config.database.url_create())
-database = setup_database()
+def setup_database(url=DATABASE_URL, echo=False):
+    return DatabaseEngine(url, echo)

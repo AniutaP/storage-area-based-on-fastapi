@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from storage_area.routing.routes import get_all_routes
-from storage_area.database.database import database
+from storage_area.settings import database
 
 
 @asynccontextmanager

@@ -1,4 +1,4 @@
-from storage_area.database.models import ProductModel
+from storage_area.database.models.models import ProductModel
 from sqlalchemy import select
 
 
@@ -22,7 +22,7 @@ class ProductRepository:
             products = result.all()
             return products
 
-    async def get_by_id(self,  id: int) -> ProductModel | None:
+    async def get_by_id(self, id: int) -> ProductModel | None:
         async with self._session() as session:
             product = await session.get(ProductModel, id)
             if product is None:
@@ -36,7 +36,7 @@ class ProductRepository:
                 await session.delete(product_to_delete)
                 await session.commit()
 
-    async def update_by_id(self,  id, data: dict) -> ProductModel | None:
+    async def update_by_id(self, id, data: dict) -> ProductModel | None:
         async with self._session() as session:
             data = {**data}
             product_to_update = await session.get(ProductModel, id)

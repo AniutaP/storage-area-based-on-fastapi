@@ -6,10 +6,10 @@ class SOrderItem(BaseModel):
     quantity: int
     product_id: int
 
-    @field_validator('quantity')
+    @field_validator("quantity")
     def check_quantity(cls, value):
         if value < 0:
-            raise ValueError('Quantity should not be negative')
+            raise ValueError("Quantity should not be negative")
         return value
 
     model_config = ConfigDict(from_attributes=True)
