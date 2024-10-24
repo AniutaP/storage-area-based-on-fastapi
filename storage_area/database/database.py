@@ -6,12 +6,6 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 from contextlib import asynccontextmanager
-import os
-from dotenv import load_dotenv
-
-
-load_dotenv()
-DATABASE_URL = os.getenv("DATABASE_URL")
 
 
 class DatabaseEngine:
@@ -39,5 +33,5 @@ class DatabaseEngine:
             await self.engine.dispose()
 
 
-def setup_database(url=DATABASE_URL, echo=False):
+def setup_database(url, echo=False):
     return DatabaseEngine(url, echo)
