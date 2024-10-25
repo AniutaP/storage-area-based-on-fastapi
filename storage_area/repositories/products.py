@@ -23,24 +23,21 @@ class ProductRepository:
             products = result.all()
             return products
 
-    async def get_by_id(self, id: int) -> ProductModel | None:
+    async def get_by_id(self, id: str) -> ProductModel | None:
         async with self._session() as session:
-            id = int(id)
-            product = await session.get(ProductModel, id)
+            product = await session.get(ProductModel, int(id))
             return product
 
-    async def delete_by_id(self, id: int) -> None:
+    async def delete_by_id(self, id: str) -> None:
         async with self._session() as session:
-            id = int(id)
-            product_to_delete = await session.get(ProductModel, id)
+            product_to_delete = await session.get(ProductModel, int(id))
             await session.delete(product_to_delete)
             await session.commit()
 
-    async def update_by_id(self, id, data: dict) -> ProductModel | None:
+    async def update_by_id(self, id: str, data: dict) -> ProductModel | None:
         async with self._session() as session:
-            id = int(id)
             data = {**data}
-            product_to_update = await session.get(ProductModel, id)
+            product_to_update = await session.get(ProductModel, int(id))
             for field, value in data.items():
                 if value:
                     setattr(product_to_update, field, data[field])

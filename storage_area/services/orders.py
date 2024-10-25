@@ -9,7 +9,7 @@ from collections import defaultdict
 class OrderService:
     repository: OrderRepository
 
-    async def create(self, data):
+    async def check_quantity_product(self, data) -> bool:
         from storage_area.depends.depends import product_service
 
         orderitems = data["orderitems"]
@@ -25,8 +25,12 @@ class OrderService:
                     422,
                     f"Quantity product with id: {product_id} exceeds stock availability"
                 )
+        return True
 
-        return await self.repository.create(data)
+    async def create(self, data):
+        check = await self.check_quantity_product(data)
+        if check:
+            return await self.repository.create(data)
 
     async def get_all(self):
         return await self.repository.get_all()

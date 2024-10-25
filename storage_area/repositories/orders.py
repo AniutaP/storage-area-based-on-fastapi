@@ -46,20 +46,18 @@ class OrderRepository:
             orders = result.all()
             return orders
 
-    async def get_by_id(self, id: int) -> OrderModel | None:
+    async def get_by_id(self, id: str) -> OrderModel | None:
         async with self._session() as session:
-            id = int(id)
-            query = select(OrderModel).where(OrderModel.id == id)
+            query = select(OrderModel).where(OrderModel.id == int(id))
             order = await session.scalar(
                 query.options(selectinload(OrderModel.orderitems))
             )
             return order
 
-    async def update_by_id(self, id: int, data: dict) -> OrderModel:
+    async def update_by_id(self, id: str, data: dict) -> OrderModel:
         async with self._session() as session:
-            id = int(id)
             data = {**data}
-            order_to_update = await session.get(OrderModel, id)
+            order_to_update = await session.get(OrderModel, int(id))
             for field, value in data.items():
                 if value:
                     setattr(order_to_update, field, data[field])

@@ -20,20 +20,24 @@ async def create_order(
 
 
 @router.get("/", response_model=list[SOrder])
-async def get_all_orders(order_service: OrderService = Depends(get_order_service)):
+async def get_all_orders(
+        order_service: OrderService = Depends(get_order_service)
+):
     orders = await order_service.get_all()
     return [SOrder.model_validate(order) for order in orders]
 
 
 @router.get("/{id}", response_model=SOrder)
-async def get_by_id(id, order_service: OrderService = Depends(get_order_service)):
+async def get_by_id(
+        id: str, order_service: OrderService = Depends(get_order_service)
+):
     order = await order_service.get_by_id(id=id)
     return SOrder.model_validate(order)
 
 
 @router.patch("{id}/status", response_model=SOrderStatusUpdate)
 async def update_by_id(
-    id,
+    id: str,
     order: SOrderStatusUpdate = Depends(),
     order_service: OrderService = Depends(get_order_service),
 ):

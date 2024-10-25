@@ -20,20 +20,24 @@ async def create(
 
 
 @router.get("/", response_model=list[SProduct])
-async def get_all(product_service: ProductService = Depends(get_product_service)):
+async def get_all(
+        product_service: ProductService = Depends(get_product_service)
+):
     products = await product_service.get_all()
     return [SProduct.model_validate(product) for product in products]
 
 
 @router.get("{id}", response_model=SProduct)
-async def get_by_id(id, product_service: ProductService = Depends(get_product_service)):
+async def get_by_id(
+        id: str, product_service: ProductService = Depends(get_product_service)
+):
     product = await product_service.get_by_id(id=id)
     return SProduct.model_validate(product)
 
 
 @router.put("{id}", response_model=SProduct)
 async def update_by_id(
-    id,
+    id: str,
     product: SProductUpdate = Depends(),
     product_service: ProductService = Depends(get_product_service),
 ):
@@ -44,7 +48,7 @@ async def update_by_id(
 
 @router.delete("{id}")
 async def delete_by_id(
-    id, product_service: ProductService = Depends(get_product_service)
+    id: str, product_service: ProductService = Depends(get_product_service)
 ):
     await product_service.delete_by_id(id=id)
     return {"Done": True}
