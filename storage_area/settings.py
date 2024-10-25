@@ -1,4 +1,4 @@
-from storage_area.config import setup_configs
+from storage_area.configs import setup_configs
 from storage_area.database.database import setup_database
 
 

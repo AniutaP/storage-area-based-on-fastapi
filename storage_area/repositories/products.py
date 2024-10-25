@@ -1,5 +1,6 @@
 from storage_area.database.models.models import ProductModel
 from sqlalchemy import select
+from fastapi import HTTPException
 
 
 class ProductRepository:
@@ -24,20 +25,20 @@ class ProductRepository:
 
     async def get_by_id(self, id: int) -> ProductModel | None:
         async with self._session() as session:
+            id = int(id)
             product = await session.get(ProductModel, id)
-            if product is None:
-                return None
             return product
 
     async def delete_by_id(self, id: int) -> None:
         async with self._session() as session:
+            id = int(id)
             product_to_delete = await session.get(ProductModel, id)
-            if product_to_delete:
-                await session.delete(product_to_delete)
-                await session.commit()
+            await session.delete(product_to_delete)
+            await session.commit()
 
     async def update_by_id(self, id, data: dict) -> ProductModel | None:
         async with self._session() as session:
+            id = int(id)
             data = {**data}
             product_to_update = await session.get(ProductModel, id)
             for field, value in data.items():
