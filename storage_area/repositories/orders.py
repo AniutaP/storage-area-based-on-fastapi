@@ -16,14 +16,14 @@ class OrderRepository:
             session.add(new_order)
             await session.flush()
             order_id = new_order.id
-            query_insert_item_to_new_order = [
+            query_insert_item_to_new_order = (
                 OrderItemModel(
                     quantity=orderitem["quantity"],
                     order_id=order_id,
                     product_id=orderitem["product_id"],
                 )
                 for orderitem in orderitems
-            ]
+            )
             session.add_all(query_insert_item_to_new_order)
             await session.flush()
             query_get_current_order_with_items = select(OrderModel).where(
