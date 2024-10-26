@@ -5,8 +5,8 @@ from fastapi import HTTPException
 
 
 class OrderItemSchema(BaseModel):
-    quantity: int
     product_id: int
+    quantity: int
 
     @field_validator("quantity")
     def check_quantity(cls, value):

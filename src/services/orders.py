@@ -13,11 +13,8 @@ class OrderService:
         from src.depends.depends import product_service
 
         orderitems = data["orderitems"]
-        count_quantity_by_product_id = defaultdict(int)
         for orderitem in orderitems:
             product_id, quantity = orderitem["product_id"], orderitem["quantity"]
-            count_quantity_by_product_id[product_id] += quantity
-        for product_id, quantity in count_quantity_by_product_id.items():
             product_model = await product_service.get_by_id(product_id)
             quantity_product_in_db = product_model.quantity
             if quantity > quantity_product_in_db:
