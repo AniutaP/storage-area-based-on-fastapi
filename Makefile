@@ -2,14 +2,14 @@ install:
 	poetry install
 
 dev:
-	poetry run uvicorn storage_area:app --reload
+	poetry run uvicorn src:app --reload
 
 PORT ?= 8000
 start:
-	poetry run uvicorn 0.0.0.0:$(PORT) storage_area:app
+	poetry run uvicorn 0.0.0.0:$(PORT) src:app
 
 lint:
-	poetry run flake8 storage_area
+	poetry run flake8 src
 
 build:
 	poetry build
@@ -18,7 +18,7 @@ test:
 	poetry run pytest
 
 test-coverage:
-	poetry run pytest --cov=storage_area --cov-report xml
+	poetry run pytest --cov=src --cov-report xml
 
 check: test lint
 
