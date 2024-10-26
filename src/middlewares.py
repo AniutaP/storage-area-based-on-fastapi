@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class HttpErrorCodes:
+class HTTPErrorCodes:
     code: int
     message: str
 

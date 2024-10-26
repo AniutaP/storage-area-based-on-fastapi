@@ -1,6 +1,6 @@
 from pydantic import BaseModel, ConfigDict, field_validator
 from fastapi import HTTPException
-from src.middlewares import HttpErrorCodes
+from src.middlewares import HTTPErrorCodes
 
 
 class ProductAddSchema(BaseModel):
@@ -15,7 +15,7 @@ class ProductAddSchema(BaseModel):
     def check_price(cls, value):
         if value < 0:
             message = 'Price should not be negative'
-            error = HttpErrorCodes(422, message)
+            error = HTTPErrorCodes(422, message)
             raise HTTPException(error.code, error.message)
         return value
 
@@ -23,7 +23,7 @@ class ProductAddSchema(BaseModel):
     def check_quantity(cls, value):
         if value < 0:
             message = 'Quantity should not be negative'
-            error = HttpErrorCodes(422, message)
+            error = HTTPErrorCodes(422, message)
             raise HTTPException(error.code, error.message)
         return value
 
@@ -45,7 +45,7 @@ class ProductUpdateSchema(BaseModel):
         if not value or value > 0:
             return value
         message = 'Price should not be negative'
-        error = HttpErrorCodes(422, message)
+        error = HTTPErrorCodes(422, message)
         raise HTTPException(error.code, error.message)
 
     @field_validator("quantity")
@@ -53,7 +53,7 @@ class ProductUpdateSchema(BaseModel):
         if not value or value > 0:
             return value
         message = 'Quantity should not be negative'
-        error = HttpErrorCodes(422, message)
+        error = HTTPErrorCodes(422, message)
         raise HTTPException(error.code, error.message)
 
 

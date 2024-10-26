@@ -1,6 +1,6 @@
 from pydantic import BaseModel, ConfigDict, field_validator
 from typing import List
-from src.middlewares import HttpErrorCodes
+from src.middlewares import HTTPErrorCodes
 from fastapi import HTTPException
 
 
@@ -12,7 +12,7 @@ class OrderItemSchema(BaseModel):
     def check_quantity(cls, value):
         if value < 0:
             message = 'Quantity should not be negative'
-            error = HttpErrorCodes(422, message)
+            error = HTTPErrorCodes(422, message)
             raise HTTPException(error.code, error.message)
         return value
 
