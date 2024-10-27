@@ -8,8 +8,8 @@ class DBConfigs(BaseSettings):
     password: SecretStr
     host: str
     port: int
-    echo: bool
     url: PostgresDsn | None = None
+    dev_env: str | None = None
 
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding="utf8", extra="ignore"
@@ -25,7 +25,7 @@ class DBConfigs(BaseSettings):
                 host=self.host,
                 port=self.port,
                 path=self.db_name,
-            )
+            ).unicode_string()
 
 
 class Configs(BaseSettings):
