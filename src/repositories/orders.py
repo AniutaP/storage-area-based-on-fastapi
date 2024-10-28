@@ -1,20 +1,17 @@
 from src.database.models.orders_models import OrderModel, OrderItemModel
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class OrderRepository:
 
-    def __init__(self, db_session):
-        self._session = db_session
-
-    async def create(self, data) -> OrderModel:
-        async with self._session() as session:
+    async def create(self, data: dict, db_session: AsyncSession) -> OrderModel:
             status = data["status"]
             orderitems = data["orderitems"]
             new_order = OrderModel(status=status)
-            session.add(new_order)
-            await session.flush()
+            db_session.add(new_order)
+            await db_session.flush()
             order_id = new_order.id
             query_insert_item_to_new_order = (
                 OrderItemModel(
@@ -24,44 +21,41 @@ class OrderRepository:
                 )
                 for orderitem in orderitems
             )
-            session.add_all(query_insert_item_to_new_order)
-            await session.flush()
+            db_session.add_all(query_insert_item_to_new_order)
+            await db_session.flush()
             query_get_current_order_with_items = select(OrderModel).where(
                 OrderModel.id == order_id
             )
-            order = await session.scalar(
+            order = await db_session.scalar(
                 query_get_current_order_with_items.options(
                     selectinload(OrderModel.orderitems)
                 )
             )
-            await session.commit()
+            await db_session.commit()
             return order
 
-    async def get_all(self) -> list[OrderModel]:
-        async with self._session() as session:
+    async def get_all(self, db_session: AsyncSession) -> list[OrderModel]:
             query = select(OrderModel)
-            result = await session.scalars(
+            result = await db_session.scalars(
                 query.options(selectinload(OrderModel.orderitems))
             )
             orders = result.all()
             return orders
 
-    async def get_by_id(self, id: str) -> OrderModel | None:
-        async with self._session() as session:
+    async def get_by_id(self, id: str, db_session: AsyncSession) -> OrderModel | None:
             query = select(OrderModel).where(OrderModel.id == int(id))
-            order = await session.scalar(
+            order = await db_session.scalar(
                 query.options(selectinload(OrderModel.orderitems))
             )
             return order
 
-    async def update_by_id(self, id: str, data: dict) -> OrderModel:
-        async with self._session() as session:
+    async def update_by_id(self, id: str, data: dict, db_session: AsyncSession) -> OrderModel:
             data = {**data}
-            order_to_update = await session.get(OrderModel, int(id))
+            order_to_update = await db_session.get(OrderModel, int(id))
             for field, value in data.items():
                 if value:
                     setattr(order_to_update, field, data[field])
-            session.add(order_to_update)
-            await session.commit()
-            await session.refresh(order_to_update)
+            db_session.add(order_to_update)
+            await db_session.commit()
+            await db_session.refresh(order_to_update)
             return order_to_update
