@@ -1,14 +1,17 @@
+from dataclasses import asdict
 from src.database.models.orders_models import OrderModel, OrderItemModel
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
+from src.dto.orders import OrderDTO
 
 
 class OrderRepository:
 
-    async def create(self, data: dict, db_session: AsyncSession) -> OrderModel:
-            status = data["status"]
-            orderitems = data["orderitems"]
+    async def create(self, data: OrderDTO, db_session: AsyncSession) -> OrderModel:
+            order_data = asdict(data)
+            status = order_data["status"]
+            orderitems = order_data["orderitems"]
             new_order = OrderModel(status=status)
             db_session.add(new_order)
             await db_session.flush()
@@ -49,12 +52,12 @@ class OrderRepository:
             )
             return order
 
-    async def update_by_id(self, id: str, data: dict, db_session: AsyncSession) -> OrderModel:
-            data = {**data}
+    async def update_by_id(self, id: str, data: OrderDTO, db_session: AsyncSession) -> OrderModel:
+            order_data = asdict(data)
             order_to_update = await db_session.get(OrderModel, int(id))
-            for field, value in data.items():
+            for field, value in order_data.items():
                 if value:
-                    setattr(order_to_update, field, data[field])
+                    setattr(order_to_update, field, order_data[field])
             db_session.add(order_to_update)
             await db_session.commit()
             await db_session.refresh(order_to_update)

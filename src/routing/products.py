@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends
 from src.services.products import ProductService
 from src.schemas.products import ProductAddSchema, ProductSchema, ProductUpdateSchema
 from src.depends.depends import get_product_service, get_db_session
+from src.dto.products import ProductDTO
 
 router = APIRouter(
     prefix="/products",
@@ -16,7 +17,8 @@ async def create(
         db_session = Depends(get_db_session)
 ):
     data = product.model_dump()
-    new_product = await product_service.create(data=data, db_session=db_session)
+    product_data = ProductDTO(**data)
+    new_product = await product_service.create(data=product_data, db_session=db_session)
     return ProductSchema.model_validate(new_product)
 
 
@@ -46,7 +48,8 @@ async def update_by_id(
     db_session = Depends(get_db_session)
 ):
     data = product.model_dump()
-    product_to_update = await product_service.update_by_id(id=id, data=data, db_session=db_session)
+    product_data = ProductDTO(**data)
+    product_to_update = await product_service.update_by_id(id=id, data=product_data, db_session=db_session)
     return ProductSchema.model_validate(product_to_update)
 
 

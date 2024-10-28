@@ -212,6 +212,19 @@ files = [
 ]
 
 [[package]]
+name = "dacite"
+version = "1.8.1"
+description = "Simple creation of data classes from dictionaries."
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "dacite-1.8.1-py3-none-any.whl", hash = "sha256:cc31ad6fdea1f49962ea42db9421772afe01ac5442380d9a99fcf3d188c61afe"},
+]
+
+[package.extras]
+dev = ["black", "coveralls", "mypy", "pre-commit", "pylint", "pytest (>=5)", "pytest-benchmark", "pytest-cov"]
+
+[[package]]
 name = "fastapi"
 version = "0.115.3"
 description = "FastAPI framework, high performance, easy to learn, fast to code, ready for production"
@@ -914,4 +927,4 @@ standard = ["colorama (>=0.4)", "httptools (>=0.5.0)", "python-dotenv (>=0.13)",
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "1aec0a74916de6f22b850098d518846e93752920a310ceb6061a262d4f16cfb5"
+content-hash = "0d3954ad6579de1c8f451c8283287c3a86c3dde3dafee4ab6a7547d1477810f3"

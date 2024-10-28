@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends
 from src.services.orders import OrderService
 from src.schemas.orders import OrderAddSchema, OrderSchema,OrderStatusUpdateSchema
 from src.depends.depends import get_order_service, get_db_session
+from src.dto.orders import OrderDTO
+
 
 router = APIRouter(
     prefix="/orders",
@@ -16,7 +18,8 @@ async def create_order(
     db_session = Depends(get_db_session)
 ):
     data = order.model_dump()
-    new_order = await order_service.create(data=data, db_session=db_session)
+    order_data = OrderDTO(**data)
+    new_order = await order_service.create(data=order_data, db_session=db_session)
     return OrderSchema.model_validate(new_order)
 
 
@@ -46,5 +49,8 @@ async def update_by_id(
     db_session = Depends(get_db_session)
 ):
     data = order.model_dump()
-    order_to_update = await order_service.update_by_id(id=id, data=data, db_session=db_session)
+    print(data)
+    order_data = OrderDTO(**data)
+    print(order_data)
+    order_to_update = await order_service.update_by_id(id=id, data=order_data, db_session=db_session)
     return OrderStatusUpdateSchema.model_validate(order_to_update)
