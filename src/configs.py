@@ -9,7 +9,6 @@ class DBConfigs(BaseSettings):
     host: str
     port: int
     url: PostgresDsn | None = None
-    dev_env: str | None = None
 
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding="utf8", extra="ignore"
