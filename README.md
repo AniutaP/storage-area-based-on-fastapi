@@ -10,9 +10,18 @@ This application based on the FastApi framework with database support using SQLA
 * Orders ((POST /orders), (GET /orders), (GET /orders/{id}), PATCH /orders/{id}/status))
 
 ### System requirements:
-* programming Language - Python 3
+* programming Language - Python ^3.12
 * operating system - OS Independent
 
 
 ### Installation 
-`pip install git+https://github.com/AniutaP/storage-area-based-on-fastapi.git`
+
+* ####  clone project
+`git clone https://github.com/AniutaP/storage-area-based-on-fastapi.git`
+
+* #### start docker command 
+`docker-compose up --build`
+
+
+### Database simple backup
+`pg_dump -h <host> -U <user> -d <dbname> -f backup.sql`

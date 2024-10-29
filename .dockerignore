@@ -1,2 +1,13 @@
-venv
-Dockerfile
+**/.git
+**/.gitignore
+**/.vscode
+**/coverage
+**/.aws
+**/.ssh
+**/.DS_Store
+**/venv
+**/__pycache__
+**/.env
+**/.pytest_cache
+**/.venv
+**/.idea
