@@ -31,7 +31,7 @@ async def get_all(
     return [ProductSchema.model_validate(product) for product in products]
 
 
-@router.get("{id}", response_model=ProductSchema)
+@router.get("/{id}", response_model=ProductSchema)
 async def get_by_id(
         id: str, product_service: ProductService = Depends(get_product_service),
         db_session = Depends(get_db_session)
@@ -40,7 +40,7 @@ async def get_by_id(
     return ProductSchema.model_validate(product)
 
 
-@router.put("{id}", response_model=ProductSchema)
+@router.put("/{id}", response_model=ProductSchema)
 async def update_by_id(
     id: str,
     product: ProductUpdateSchema = Depends(),
@@ -53,7 +53,7 @@ async def update_by_id(
     return ProductSchema.model_validate(product_to_update)
 
 
-@router.delete("{id}")
+@router.delete("/{id}")
 async def delete_by_id(
     id: str, product_service: ProductService = Depends(get_product_service),
     db_session = Depends(get_db_session)

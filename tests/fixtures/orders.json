@@ -1,0 +1,29 @@
+{
+  "input_data_create": {
+    "status": "process",
+    "orderitems":[
+      {
+        "product_id": 1,
+        "quantity": 7
+      }
+    ]
+  },
+  "create_example": {
+    "status": "process",
+    "orderitems": [
+      {
+        "product_id": 1, "quantity": 7
+      }
+    ],
+    "id": 1
+  },
+  "input_bad_quantity": {
+    "status": "process",
+    "orderitems": [
+      {
+        "product_id": 1,
+        "quantity": 100
+      }
+    ]
+  }
+}

@@ -20,7 +20,6 @@ async def create_order(
     data = order.model_dump()
     orderitems = [OrderItemDTO(**item_data) for item_data in data['orderitems']]
     order_dto = OrderDTO(status=order.status, orderitems=orderitems)
-    print(order_dto)
     new_order = await order_service.create(order=order_dto, db_session=db_session)
     return OrderSchema.model_validate(new_order)
 
@@ -44,7 +43,7 @@ async def get_by_id(
     return OrderSchema.model_validate(order)
 
 
-@router.patch("{id}/status", response_model=OrderStatusUpdateSchema)
+@router.patch("/{id}/status", response_model=OrderStatusUpdateSchema)
 async def update_status_by_id(
         id: str,
         order: OrderStatusUpdateSchema = Depends(),

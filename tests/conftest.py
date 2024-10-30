@@ -15,7 +15,7 @@ import json
 load_dotenv()
 
 TEST_URL=os.getenv('TEST_URL')
-test_db = setup_database(TEST_URL)
+test_db = setup_database(TEST_URL, echo=False)
 app.include_router(get_all_routes())
 
 

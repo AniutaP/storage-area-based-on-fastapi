@@ -9,4 +9,4 @@ app.include_router(get_all_routes())
 
 @app.get("/")
 def root():
-    return HTMLResponse("<h2>FastApi: STORAGE AREA MANAGEMENT APPLICATION</h2>")
+    return HTMLResponse("<h1>FastAPI: STORAGE AREA MANAGEMENT APPLICATION</h1>")
