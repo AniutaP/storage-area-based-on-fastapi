@@ -20,7 +20,9 @@ This application based on the FastApi framework with database support using SQLA
 `git clone https://github.com/AniutaP/storage-area-based-on-fastapi.git`
 
 * #### start docker command 
-`docker-compose up --build`
+`cd storage-area-based-on-fastapi`
+
+`docker build -t storage-area-based-on-fastapi .`
 
 
 ### Database simple backup
