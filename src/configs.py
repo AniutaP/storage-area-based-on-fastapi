@@ -3,11 +3,11 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class DBConfigs(BaseSettings):
-    db_name: str
-    user: str
-    password: SecretStr
-    host: str
-    port: int
+    postgres_db: str
+    postgres_user: str
+    postgres_password: SecretStr
+    postgres_host: str
+    postgres_port: int
     url: PostgresDsn | None = None
 
     model_config = SettingsConfigDict(
@@ -19,11 +19,11 @@ class DBConfigs(BaseSettings):
         if not self.url:
             self.url = PostgresDsn.build(
                 scheme="postgresql+asyncpg",
-                username=self.user,
-                password=self.password.get_secret_value(),
-                host=self.host,
-                port=self.port,
-                path=self.db_name,
+                username=self.postgres_user,
+                password=self.postgres_password.get_secret_value(),
+                host=self.postgres_host,
+                port=self.postgres_port,
+                path=self.postgres_db,
             ).unicode_string()
 
 
