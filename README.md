@@ -33,7 +33,7 @@ POSTGRES_USER=your_user
 
 POSTGRES_PASSWORD=your_password
 
-POSTGRES_HOST=your_host
+POSTGRES_HOST=database
 
 POSTGRES_PORT=5432
 
@@ -41,7 +41,11 @@ POSTGRES_PORT=5432
 
 * #### start docker command 
 
-`docker-compose up --build`
+`sudo docker-compose up --build`
+
+* #### configuring database tables
+
+`sudo docker-compose exec web alembic upgrade head`
 
 
 ### Database simple backup
