@@ -10,8 +10,8 @@ from src.dto.products import ProductDTO
 class ProductService:
     repository: ProductRepository
 
-    async def create(self, data: ProductDTO, db_session: AsyncSession):
-        return await self.repository.create(data, db_session)
+    async def create(self, product: ProductDTO, db_session: AsyncSession):
+        return await self.repository.create(product, db_session)
 
     async def get_all(self, db_session: AsyncSession):
         return await self.repository.get_all(db_session)
@@ -24,9 +24,9 @@ class ProductService:
             raise HTTPException(error.code, error.message)
         return result
 
-    async def update_by_id(self, id: str, data: ProductDTO, db_session: AsyncSession):
+    async def update_by_id(self, id: str, product: ProductDTO, db_session: AsyncSession):
         await self.get_by_id(id, db_session)
-        return await self.repository.update_by_id(id, data, db_session)
+        return await self.repository.update_by_id(id, product, db_session)
 
     async def delete_by_id(self, id: str, db_session: AsyncSession):
         await self.get_by_id(id, db_session)

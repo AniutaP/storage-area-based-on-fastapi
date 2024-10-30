@@ -11,5 +11,6 @@ class OrderItemDTO:
 
 @dataclass
 class OrderDTO:
-    id: int
     status: str
+    id: int | None = None
+    orderitems: list[OrderItemDTO] = field(default_factory=list)

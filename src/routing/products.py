@@ -17,8 +17,8 @@ async def create(
         db_session = Depends(get_db_session)
 ):
     data = product.model_dump()
-    product_data = ProductDTO(**data)
-    new_product = await product_service.create(data=product_data, db_session=db_session)
+    product_dto = ProductDTO(**data)
+    new_product = await product_service.create(product=product_dto, db_session=db_session)
     return ProductSchema.model_validate(new_product)
 
 
@@ -48,8 +48,8 @@ async def update_by_id(
     db_session = Depends(get_db_session)
 ):
     data = product.model_dump()
-    product_data = ProductDTO(**data)
-    product_to_update = await product_service.update_by_id(id=id, data=product_data, db_session=db_session)
+    product_dto = ProductDTO(**data)
+    product_to_update = await product_service.update_by_id(id=id, product=product_dto, db_session=db_session)
     return ProductSchema.model_validate(product_to_update)
 
 

@@ -8,8 +8,13 @@ from typing import AsyncGenerator
 
 async def get_db_session() -> AsyncGenerator:
     async with database.session_factory() as session:
-        yield session
-        await session.close()
+        try:
+            yield session
+        except Exception:
+            await session.rollback()
+            raise
+        finally:
+            await session.close()
 
 
 product_repository = ProductRepository()

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from src.services.orders import OrderService
 from src.schemas.orders import OrderAddSchema, OrderSchema,OrderStatusUpdateSchema
 from src.depends.depends import get_order_service, get_db_session
-from src.dto.orders import OrderDTO
+from src.dto.orders import OrderDTO, OrderItemDTO
 
 
 router = APIRouter(
@@ -13,13 +13,15 @@ router = APIRouter(
 
 @router.post("/", response_model=OrderSchema)
 async def create_order(
-    order: OrderAddSchema = Depends(),
-    order_service: OrderService = Depends(get_order_service),
-    db_session = Depends(get_db_session)
+        order: OrderAddSchema = Depends(),
+        order_service: OrderService = Depends(get_order_service),
+        db_session = Depends(get_db_session)
 ):
     data = order.model_dump()
-    order_data = OrderDTO(**data)
-    new_order = await order_service.create(data=order_data, db_session=db_session)
+    orderitems = [OrderItemDTO(**item_data) for item_data in data['orderitems']]
+    order_dto = OrderDTO(status=order.status, orderitems=orderitems)
+    print(order_dto)
+    new_order = await order_service.create(order=order_dto, db_session=db_session)
     return OrderSchema.model_validate(new_order)
 
 
@@ -34,7 +36,8 @@ async def get_all_orders(
 
 @router.get("/{id}", response_model=OrderSchema)
 async def get_by_id(
-        id: str, order_service: OrderService = Depends(get_order_service),
+        id: str,
+        order_service: OrderService = Depends(get_order_service),
         db_session = Depends(get_db_session)
 ):
     order = await order_service.get_by_id(id=id, db_session=db_session)
@@ -42,15 +45,13 @@ async def get_by_id(
 
 
 @router.patch("{id}/status", response_model=OrderStatusUpdateSchema)
-async def update_by_id(
-    id: str,
-    order: OrderStatusUpdateSchema = Depends(),
-    order_service: OrderService = Depends(get_order_service),
-    db_session = Depends(get_db_session)
+async def update_status_by_id(
+        id: str,
+        order: OrderStatusUpdateSchema = Depends(),
+        order_service: OrderService = Depends(get_order_service),
+        db_session = Depends(get_db_session)
 ):
     data = order.model_dump()
-    print(data)
-    order_data = OrderDTO(**data)
-    print(order_data)
-    order_to_update = await order_service.update_by_id(id=id, data=order_data, db_session=db_session)
+    order_dto = OrderDTO(**data)
+    order_to_update = await order_service.update_status_by_id(id=id, order=order_dto, db_session=db_session)
     return OrderStatusUpdateSchema.model_validate(order_to_update)

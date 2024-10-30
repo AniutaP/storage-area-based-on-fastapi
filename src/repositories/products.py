@@ -8,8 +8,8 @@ from src.dto.products import ProductDTO
 
 class ProductRepository:
 
-    async def create(self, data: ProductDTO, db_session: AsyncSession) -> ProductModel:
-        product_data = asdict(data)
+    async def create(self, product: ProductDTO, db_session: AsyncSession) -> ProductModel:
+        product_data = asdict(product)
         new_product = ProductModel(**product_data)
         db_session.add(new_product)
         await db_session.flush()
@@ -27,8 +27,8 @@ class ProductRepository:
         return product
 
 
-    async def update_by_id(self, id: str, data: ProductDTO, db_session: AsyncSession) -> ProductModel | None:
-        product_data = asdict(data)
+    async def update_by_id(self, id: str, product: ProductDTO, db_session: AsyncSession) -> ProductModel | None:
+        product_data = asdict(product)
         product_to_update = await db_session.get(ProductModel, int(id))
         for field, value in product_data.items():
             if value:
