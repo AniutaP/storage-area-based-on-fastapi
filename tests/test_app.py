@@ -1,5 +1,3 @@
-import json
-
 import pytest
 from src.depends.depends import product_service, order_service
 from src.dto.orders import OrderDTO, OrderItemDTO
