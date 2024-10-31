@@ -1,9 +1,8 @@
-import json
 import pytest
 from src.depends.depends import product_service, order_service
 from src.dto.orders import OrderDTO, OrderItemDTO
 from src.schemas.orders import OrderSchema
-from src.schemas.products import ProductSchema, ProductAddSchema
+from src.schemas.products import ProductSchema
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 from tests.conftest import load_data
@@ -29,7 +28,7 @@ async def test_create_product(db_session: AsyncSession):
 
 
 @pytest.mark.asyncio(loop_scope="session")
-async def test_create_product_bad_price(async_client, db_session: AsyncSession):
+async def test_create_product_bad_price(async_client: AsyncClient, db_session: AsyncSession):
     data = test_data_products['input_data_create_bad_price']
     response = await async_client.post("/products/", params=data)
     assert response.status_code == 422
@@ -37,7 +36,7 @@ async def test_create_product_bad_price(async_client, db_session: AsyncSession):
 
 
 @pytest.mark.asyncio(loop_scope="session")
-async def test_get_all_product(async_client, db_session: AsyncSession):
+async def test_get_all_product(async_client: AsyncClient, db_session: AsyncSession):
     response = await async_client.get("/products/")
     assert response.status_code == 200
     assert response.json() == [test_data_products['create_example']]
