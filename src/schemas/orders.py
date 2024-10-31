@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict, field_validator
+from pydantic import BaseModel, ConfigDict, Field
 from typing import List
 from src.middlewares import HTTPErrorCodes
 from fastapi import HTTPException
@@ -6,15 +6,7 @@ from fastapi import HTTPException
 
 class OrderItemSchema(BaseModel):
     product_id: int
-    quantity: int
-
-    @field_validator("quantity")
-    def check_quantity(cls, value):
-        if value < 0:
-            message = 'Quantity should not be negative'
-            error = HTTPErrorCodes(422, message)
-            raise HTTPException(error.code, error.message)
-        return value
+    quantity: int = Field(ge=0)
 
     model_config = ConfigDict(from_attributes=True)
 

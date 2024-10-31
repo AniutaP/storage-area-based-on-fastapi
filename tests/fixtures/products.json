@@ -13,5 +13,10 @@
     "description": null,
     "price": 60,
     "quantity": 30
+  },
+  "input_data_create_bad_price": {
+    "name": "apple",
+    "price": -50,
+    "quantity": 5
   }
 }

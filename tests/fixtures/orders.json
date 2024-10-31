@@ -18,7 +18,9 @@
     "id": 1
   },
   "input_bad_quantity": {
-    "status": "process",
+    "params": {
+      "status": "process"
+    },
     "orderitems": [
       {
         "product_id": 1,

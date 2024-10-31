@@ -1,8 +1,9 @@
+import json
 import pytest
 from src.depends.depends import product_service, order_service
 from src.dto.orders import OrderDTO, OrderItemDTO
 from src.schemas.orders import OrderSchema
-from src.schemas.products import ProductSchema
+from src.schemas.products import ProductSchema, ProductAddSchema
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 from tests.conftest import load_data
@@ -28,11 +29,18 @@ async def test_create_product(db_session: AsyncSession):
 
 
 @pytest.mark.asyncio(loop_scope="session")
+async def test_create_product_bad_price(async_client, db_session: AsyncSession):
+    data = test_data_products['input_data_create_bad_price']
+    response = await async_client.post("/products/", params=data)
+    assert response.status_code == 422
+    assert response.json()['detail'][0]['msg'] == 'Input should be greater than or equal to 0'
+
+
+@pytest.mark.asyncio(loop_scope="session")
 async def test_get_all_product(async_client, db_session: AsyncSession):
     response = await async_client.get("/products/")
     assert response.status_code == 200
     assert response.json() == [test_data_products['create_example']]
-
     results = await product_service.get_all(db_session)
     res = [ProductSchema.model_validate(result).model_dump() for result in results]
     assert res == [test_data_products['create_example']]
@@ -42,7 +50,6 @@ async def test_get_all_product(async_client, db_session: AsyncSession):
 async def test_get_product_by_id(async_client: AsyncClient, db_session: AsyncSession):
     response = await async_client.get("/products/1")
     assert response.status_code == 200
-
     result = await product_service.get_by_id(1, db_session)
     res = ProductSchema.model_validate(result).model_dump()
     assert res == test_data_products['create_example']
@@ -56,3 +63,11 @@ async def test_create_order(db_session: AsyncSession):
     result = await order_service.create(order_dto, db_session)
     res = OrderSchema.model_validate(result).model_dump()
     assert res == test_data_orders['create_example']
+
+
+@pytest.mark.asyncio(loop_scope="session")
+async def test_create_order_bad_quantity(async_client: AsyncClient, db_session: AsyncSession):
+    data = test_data_orders['input_bad_quantity']
+    response = await async_client.post("/orders/", params=data["params"], json=data['orderitems'])
+    assert response.status_code == 422
+    assert response.json()['detail'] == 'Quantity product with id: 1 exceeds stock availability'
