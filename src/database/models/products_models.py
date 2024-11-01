@@ -9,4 +9,4 @@ class ProductModel(BaseModel):
     name: Mapped[str] = mapped_column(unique=True)
     description: Mapped[str | None]
     price: Mapped[int] = mapped_column(Numeric(precision=10, scale=2))
-    quantity: Mapped[int]
+    quantity: Mapped[int] = mapped_column(index=True)
