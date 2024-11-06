@@ -1,5 +1,10 @@
 from pydantic import SecretStr, PostgresDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
+import os
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 
 class DBConfigs(BaseSettings):
@@ -28,6 +33,9 @@ class DBConfigs(BaseSettings):
 
 
 class Configs(BaseSettings):
+    SECRET_KEY: str = os.getenv("SECRET_KEY")
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     db_configs: DBConfigs = DBConfigs()
 
 

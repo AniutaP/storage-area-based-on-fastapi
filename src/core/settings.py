@@ -1,4 +1,4 @@
-from src.configs import setup_configs
+from src.core.configs import setup_configs
 from src.database.database import setup_database
 
 

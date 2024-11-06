@@ -21,4 +21,3 @@ class HTTPErrorCodes:
 
     def get_status(self, code):
         return self.codes[code]
-

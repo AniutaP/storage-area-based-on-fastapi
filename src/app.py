@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from src.routing.routes import get_all_routes
 from fastapi.responses import HTMLResponse
+from src.routing.routes import get_all_routes
 
 
 app = FastAPI()

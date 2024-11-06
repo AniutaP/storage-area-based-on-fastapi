@@ -1,9 +1,8 @@
-from dataclasses import asdict
-from src.database.models.orders_models import OrderModel, OrderItemModel
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.dto.orders import OrderDTO, OrderItemDTO
+from src.database.models.orders import OrderModel, OrderItemModel
+from src.dto.orders import OrderDTO
 
 
 class OrderRepository:

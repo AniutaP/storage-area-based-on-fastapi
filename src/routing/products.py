@@ -1,8 +1,11 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
+
+from src.middlewares import HTTPErrorCodes
 from src.services.products import ProductService
 from src.schemas.products import ProductAddSchema, ProductSchema, ProductUpdateSchema
-from src.depends.depends import get_product_service, get_db_session
+from src.depends.depends import get_product_service, get_db_session, get_current_user
 from src.dto.products import ProductDTO
+from src.dto.users import UserDTO
 
 router = APIRouter(
     prefix="/products",
@@ -14,8 +17,13 @@ router = APIRouter(
 async def create(
         product: ProductAddSchema = Depends(),
         product_service: ProductService = Depends(get_product_service),
+        current_user: UserDTO = Depends(get_current_user),
         db_session = Depends(get_db_session)
 ):
+    if not current_user.is_superuser:
+        message = "You do not have permission to perform this action"
+        error = HTTPErrorCodes(403, message)
+        raise HTTPException(error.code, error.message)
     data = product.model_dump()
     product_dto = ProductDTO(**data)
     new_product = await product_service.create(product=product_dto, db_session=db_session)

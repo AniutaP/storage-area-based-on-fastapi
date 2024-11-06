@@ -1,7 +1,5 @@
 from pydantic import BaseModel, ConfigDict, Field
 from typing import List
-from src.middlewares import HTTPErrorCodes
-from fastapi import HTTPException
 
 
 class OrderItemSchema(BaseModel):

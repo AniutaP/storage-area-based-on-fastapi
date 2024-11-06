@@ -1,9 +1,9 @@
-from src.repositories.products import ProductRepository
 from dataclasses import dataclass
 from fastapi import HTTPException
-from src.middlewares import HTTPErrorCodes
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.dto.products import ProductDTO
+from src.repositories.products import ProductRepository
+from src.middlewares import HTTPErrorCodes
 
 
 @dataclass

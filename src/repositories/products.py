@@ -1,8 +1,7 @@
 from dataclasses import asdict
-
-from src.database.models.products_models import ProductModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from src.database.models.products import ProductModel
 from src.dto.products import ProductDTO
 
 
