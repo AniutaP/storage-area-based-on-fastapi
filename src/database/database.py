@@ -15,5 +15,5 @@ class DatabaseEngine:
         )
 
 
-def setup_database(url, echo=True):
+def setup_database(url: str, echo: bool = True) -> DatabaseEngine:
     return DatabaseEngine(url, echo)

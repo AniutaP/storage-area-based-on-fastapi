@@ -5,4 +5,4 @@ from src.database.models.users import UserModel
 
 
 
-__all__ = ("ProductModel", "OrderItemModel", "OrderModel")
+__all__ = ("BaseModel", "ProductModel", "OrderItemModel", "OrderModel", "UserModel")

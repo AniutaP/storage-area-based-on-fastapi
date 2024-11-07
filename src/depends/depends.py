@@ -1,6 +1,8 @@
 from fastapi import Depends, HTTPException
 from typing import AsyncGenerator
 from jose import JWTError, jwt
+
+from src.database.models import UserModel
 from src.schemas.tokens import oauth2_scheme
 from src.repositories.login import LoginRepository
 from src.repositories.products import ProductRepository
@@ -37,7 +39,8 @@ async def get_current_user(
         token: str = Depends(oauth2_scheme),
         user_service = Depends(get_user_service),
         db_session = Depends(get_db_session)
-):
+) -> UserModel:
+
     message = "Could not validate credentials"
     error = HTTPErrorCodes(401, message)
     credentials_exception =  HTTPException(error.code, error.message)
@@ -49,7 +52,8 @@ async def get_current_user(
             raise credentials_exception
     except JWTError:
         raise credentials_exception
-    user = await user_service.get_by_email(email=username, db_session=db_session)
+
+    user: UserModel = await user_service.get_by_email(email=username, db_session=db_session)
     if user is None:
         raise credentials_exception
     return user

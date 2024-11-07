@@ -1,7 +1,10 @@
+from fastapi import HTTPException
 from dataclasses import dataclass
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.security import Hasher
+from src.database.models import UserModel
+from src.middlewares import HTTPErrorCodes
 from src.repositories.login import LoginRepository
 
 
@@ -9,10 +12,13 @@ from src.repositories.login import LoginRepository
 class LoginService:
     repository: LoginRepository
 
-    async def authenticate_user(self, email: str, password: str, db_session: AsyncSession):
+    async def authenticate_user(
+            self, email: str, password: str, db_session: AsyncSession
+    ) -> UserModel | None:
+
         user = await self.repository.get_user_by_email(email=email, db_session=db_session)
-        if not user:
-            return False
+
         if not Hasher.verify_password(password, user.password):
-            return False
+            return None
+
         return user

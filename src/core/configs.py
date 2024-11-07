@@ -39,6 +39,6 @@ class Configs(BaseSettings):
     db_configs: DBConfigs = DBConfigs()
 
 
-def setup_configs():
+def setup_configs() -> Configs:
     configs = Configs()
     return configs
