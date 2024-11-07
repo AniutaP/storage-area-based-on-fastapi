@@ -22,7 +22,9 @@ async def login_for_access_token(
         login_service: LoginService = Depends(get_auth_service),
         db_session = Depends(get_db_session)
 ):
-    user = await login_service.authenticate_user(form_data.username, form_data.password, db_session)
+    user = await login_service.authenticate_user(
+        email=form_data.username, password=form_data.password, db_session=db_session
+    )
 
     if not user:
         message = 'Incorrect username or password'
