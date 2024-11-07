@@ -30,7 +30,6 @@ async def get_current_user(
 
     try:
         payload = jwt.decode(token, configs.SECRET_KEY, algorithms=[configs.ALGORITHM])
-        print(payload)
         token_payload_dto = TokenPayloadDTO(**payload)
         email = token_payload_dto.sub
         if email is None:
