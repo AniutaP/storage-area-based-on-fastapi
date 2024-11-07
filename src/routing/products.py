@@ -3,7 +3,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from src.middlewares import HTTPErrorCodes
 from src.services.products import ProductService
 from src.schemas.products import ProductAddSchema, ProductSchema, ProductUpdateSchema
-from src.depends.depends import get_product_service, get_db_session, get_current_user
+from src.depends.products import get_product_service
+from src.depends.database import get_db_session
+from src.depends.users import get_current_user
 from src.dto.products import ProductDTO
 from src.dto.users import UserDTO
 

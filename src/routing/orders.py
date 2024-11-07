@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends
 from src.services.orders import OrderService
 from src.schemas.orders import OrderAddSchema, OrderSchema,OrderStatusUpdateSchema
-from src.depends.depends import get_order_service, get_db_session
+from src.depends.orders import get_order_service
+from src.depends.database import get_db_session
 from src.dto.orders import OrderDTO, OrderItemDTO
 
 

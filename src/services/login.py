@@ -16,6 +16,9 @@ class LoginService:
 
         user = await self.repository.get_user_by_email(email=email, db_session=db_session)
 
+        if not user:
+            return None
+
         if not Hasher.verify_password(password, user.password):
             return None
 

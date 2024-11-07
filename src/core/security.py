@@ -1,12 +1,16 @@
+from fastapi.security import OAuth2PasswordBearer
+from dataclasses import asdict
 from datetime import datetime, timedelta, timezone
 from jose import jwt
 from passlib.context import CryptContext
 from typing import Optional
 from src.core.settings import configs
 from src.dto.tokens import TokenPayloadDTO
-from dataclasses import asdict
+
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/token")
 
 
 class Hasher:

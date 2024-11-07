@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends
 from src.services.users import UserService
 from src.schemas.users import UserAddSchema, UserSchema, UserUpdateSchema
-from src.depends.depends import get_user_service, get_db_session
+from src.depends.users import get_user_service
+from src.depends.database import get_db_session
 from src.dto.users import UserDTO
 
 router = APIRouter(

@@ -7,7 +7,8 @@ from src.dto.tokens import TokenPayloadDTO
 from src.middlewares import HTTPErrorCodes
 from src.services.login import LoginService
 from src.schemas.tokens import TokenSchema
-from src.depends.depends import get_auth_service, get_db_session
+from src.depends.login import get_auth_service
+from src.depends.database import get_db_session
 
 
 router = APIRouter(
