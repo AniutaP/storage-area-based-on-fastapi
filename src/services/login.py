@@ -1,10 +1,8 @@
-from fastapi import HTTPException
 from dataclasses import dataclass
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.security import Hasher
 from src.database.models import UserModel
-from src.middlewares import HTTPErrorCodes
 from src.repositories.login import LoginRepository
 
 
