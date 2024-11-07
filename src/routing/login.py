@@ -36,4 +36,4 @@ async def login_for_access_token(
     token_payload_dto = TokenPayloadDTO(sub=user.email)
 
     access_token = create_access_token(token_payload_dto)
-    return {"access_token": access_token, "token_type": "bearer"}
+    return TokenSchema(access_token=access_token, token_type="bearer")
