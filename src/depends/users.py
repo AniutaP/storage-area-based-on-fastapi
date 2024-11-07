@@ -3,6 +3,7 @@ from jose import JWTError, jwt
 
 from src.database.models import UserModel
 from src.core.security import oauth2_scheme
+from src.dto.tokens import TokenPayloadDTO
 from src.repositories.users import UserRepository
 from src.services.users import UserService
 from src.core.settings import database, configs
@@ -29,13 +30,15 @@ async def get_current_user(
 
     try:
         payload = jwt.decode(token, configs.SECRET_KEY, algorithms=[configs.ALGORITHM])
-        username: str = payload.get("sub")
-        if username is None:
+        print(payload)
+        token_payload_dto = TokenPayloadDTO(**payload)
+        email = token_payload_dto.sub
+        if email is None:
             raise credentials_exception
     except JWTError:
         raise credentials_exception
 
-    user: UserModel = await user_service.get_by_email(email=username, db_session=db_session)
+    user: UserModel = await user_service.get_by_email(email=email, db_session=db_session)
     if user is None:
         raise credentials_exception
     return user
