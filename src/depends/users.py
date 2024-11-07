@@ -6,9 +6,10 @@ from src.core.security import oauth2_scheme
 from src.dto.tokens import TokenPayloadDTO
 from src.repositories.users import UserRepository
 from src.services.users import UserService
-from src.core.settings import database, configs
+from src.core.settings import configs
 from src.middlewares import HTTPErrorCodes
 from src.depends.database import get_db_session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 user_repository = UserRepository()
 user_service = UserService(user_repository)
@@ -20,8 +21,8 @@ def get_user_service() -> UserService:
 
 async def get_current_user(
         token: str = Depends(oauth2_scheme),
-        user_service = Depends(get_user_service),
-        db_session = Depends(get_db_session)
+        user_service: UserService = Depends(get_user_service),
+        db_session: AsyncSession = Depends(get_db_session)
 ) -> UserModel:
 
     message = "Could not validate credentials"

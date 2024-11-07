@@ -4,6 +4,8 @@ from src.schemas.users import UserAddSchema, UserSchema, UserUpdateSchema
 from src.depends.users import get_user_service
 from src.depends.database import get_db_session
 from src.dto.users import UserDTO
+from sqlalchemy.ext.asyncio import AsyncSession
+
 
 router = APIRouter(
     prefix="/users",
@@ -15,7 +17,7 @@ router = APIRouter(
 async def create(
         user: UserAddSchema = Depends(),
         user_service: UserService = Depends(get_user_service),
-        db_session = Depends(get_db_session)
+        db_session: AsyncSession = Depends(get_db_session)
 ):
     data = user.model_dump()
     user_dto = UserDTO(**data)
@@ -26,7 +28,7 @@ async def create(
 @router.get("/", response_model=list[UserSchema])
 async def get_all(
         user_service: UserService = Depends(get_user_service),
-        db_session = Depends(get_db_session)
+        db_session: AsyncSession = Depends(get_db_session)
 ):
     users = await user_service.get_all(db_session=db_session)
     return [UserSchema.model_validate(user) for user in users]
@@ -35,7 +37,7 @@ async def get_all(
 @router.get("/{id}", response_model=UserSchema)
 async def get_by_id(
         id: str, user_service: UserService = Depends(get_user_service),
-        db_session = Depends(get_db_session)
+        db_session: AsyncSession = Depends(get_db_session)
 ):
     user = await user_service.get_by_id(id=id, db_session=db_session)
     return UserSchema.model_validate(user)
@@ -46,7 +48,7 @@ async def update_by_id(
     id: str,
     user: UserUpdateSchema = Depends(),
     user_service: UserService = Depends(get_user_service),
-    db_session = Depends(get_db_session)
+    db_session: AsyncSession = Depends(get_db_session)
 ):
     data = user.model_dump()
     user_dto = UserDTO(**data)
@@ -57,7 +59,7 @@ async def update_by_id(
 @router.delete("/{id}")
 async def delete_by_id(
     id: str, user_service: UserService = Depends(get_user_service),
-    db_session = Depends(get_db_session)
+    db_session: AsyncSession = Depends(get_db_session)
 ):
     await user_service.delete_by_id(id=id, db_session=db_session)
     return {"Done": True}
