@@ -2,7 +2,6 @@ from dataclasses import asdict
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.security import Hasher
 from src.database.models.users import UserModel
 from src.dto.users import UserDTO
 
@@ -10,7 +9,6 @@ from src.dto.users import UserDTO
 class UserRepository:
 
     async def create(self, user: UserDTO, db_session: AsyncSession) -> UserModel:
-        user.password = Hasher.get_password_hash(user.password)
         user_data = asdict(user)
         new_user = UserModel(**user_data)
         db_session.add(new_user)

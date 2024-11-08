@@ -1,15 +1,16 @@
 from fastapi import Depends, HTTPException
 from jose import JWTError, jwt
-
+from sqlalchemy.ext.asyncio import AsyncSession
 from src.database.models import UserModel
 from src.core.security import oauth2_scheme
 from src.dto.tokens import TokenPayloadDTO
+from src.dto.users import AdminDTO
 from src.repositories.users import UserRepository
 from src.services.users import UserService
-from src.core.settings import configs
+from src.core.admin import configs, admin
 from src.middlewares import HTTPErrorCodes
 from src.depends.database import get_db_session
-from sqlalchemy.ext.asyncio import AsyncSession
+
 
 user_repository = UserRepository()
 user_service = UserService(user_repository)
@@ -23,7 +24,7 @@ async def get_current_user(
         token: str = Depends(oauth2_scheme),
         user_service: UserService = Depends(get_user_service),
         db_session: AsyncSession = Depends(get_db_session)
-) -> UserModel:
+) -> UserModel | AdminDTO:
 
     message = "Could not validate credentials"
     error = HTTPErrorCodes(401, message)
@@ -41,4 +42,8 @@ async def get_current_user(
     user: UserModel = await user_service.get_by_email(email=email, db_session=db_session)
     if user is None:
         raise credentials_exception
+
+    if user.email == admin.email and user.password == admin.password:
+        return admin
+
     return user

@@ -33,6 +33,8 @@ class DBConfigs(BaseSettings):
 
 
 class Configs(BaseSettings):
+    ADMIN_EMAIL: str = os.getenv("ADMIN_EMAIL")
+    ADMIN_PASSWORD: str = os.getenv("ADMIN_PASSWORD")
     SECRET_KEY: str = os.getenv("SECRET_KEY")
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
