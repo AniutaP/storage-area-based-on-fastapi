@@ -31,7 +31,6 @@ class UserRepository:
         user = await db_session.scalar(query)
         return user
 
-
     async def update_by_id(self, id: str, user: UserDTO, db_session: AsyncSession) -> UserModel | None:
         user_data = asdict(user)
         user_to_update = await db_session.get(UserModel, int(id))
@@ -42,7 +41,6 @@ class UserRepository:
         await db_session.commit()
         await db_session.refresh(user_to_update)
         return user_to_update
-
 
     async def delete_by_id(self, id: str, db_session: AsyncSession) -> None:
         user_to_delete = await db_session.get(UserModel, int(id))

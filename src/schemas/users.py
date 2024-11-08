@@ -2,7 +2,7 @@ from pydantic import BaseModel, ConfigDict, Field, EmailStr
 
 
 class UserAddSchema(BaseModel):
-    name: str
+    name: str | None = Field(default=None)
     email: EmailStr
     password: str = Field(min_length=5)
 

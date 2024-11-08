@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from src.dto.products import ProductDTO
 from src.repositories.products import ProductRepository
-from src.middlewares import HTTPErrorCodes
 
 
 @dataclass
@@ -20,8 +20,11 @@ class ProductService:
         result = await self.repository.get_by_id(id, db_session)
         if result is None:
             message = f'Object with id {id} not found'
-            error = HTTPErrorCodes(404, message)
-            raise HTTPException(error.code, error.message)
+            raise HTTPException(404, message)
+        return result
+
+    async def get_by_name(self, name: str, db_session: AsyncSession):
+        result = await self.repository.get_by_name(name, db_session)
         return result
 
     async def update_by_id(self, id: str, product: ProductDTO, db_session: AsyncSession):

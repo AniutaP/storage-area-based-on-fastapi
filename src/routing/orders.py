@@ -1,10 +1,13 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.depends.users import get_current_user
 from src.services.orders import OrderService
 from src.schemas.orders import OrderAddSchema, OrderSchema,OrderStatusUpdateSchema
 from src.depends.orders import get_order_service
 from src.depends.database import get_db_session
 from src.dto.orders import OrderDTO, OrderItemDTO
-from sqlalchemy.ext.asyncio import AsyncSession
+from src.dto.users import UserDTO
 
 
 router = APIRouter(
@@ -16,9 +19,14 @@ router = APIRouter(
 @router.post("/", response_model=OrderSchema)
 async def create_order(
         order: OrderAddSchema = Depends(),
+        current_user: UserDTO = Depends(get_current_user),
         order_service: OrderService = Depends(get_order_service),
         db_session: AsyncSession = Depends(get_db_session)
 ):
+    if not current_user:
+        message = "Unauthorized"
+        raise HTTPException(401, message)
+
     data = order.model_dump()
     orderitems = [OrderItemDTO(**item_data) for item_data in data['orderitems']]
     order_dto = OrderDTO(status=order.status, orderitems=orderitems)
@@ -49,9 +57,14 @@ async def get_by_id(
 async def update_status_by_id(
         id: str,
         order: OrderStatusUpdateSchema = Depends(),
+        current_user: UserDTO = Depends(get_current_user),
         order_service: OrderService = Depends(get_order_service),
         db_session: AsyncSession = Depends(get_db_session)
 ):
+    if not current_user.is_superuser:
+        message = "Forbidden: You do not have permission to perform this action"
+        raise HTTPException(403, message)
+
     data = order.model_dump()
     order_dto = OrderDTO(**data)
     order_to_update = await order_service.update_status_by_id(id=id, order=order_dto, db_session=db_session)

@@ -4,7 +4,6 @@ from fastapi import HTTPException
 
 from src.core.security import create_access_token
 from src.dto.tokens import TokenPayloadDTO
-from src.middlewares import HTTPErrorCodes
 from src.services.login import LoginService
 from src.schemas.tokens import TokenSchema
 from src.depends.login import get_auth_service
@@ -30,8 +29,7 @@ async def login_for_access_token(
 
     if not user:
         message = 'Incorrect username or password'
-        error = HTTPErrorCodes(401, message)
-        raise HTTPException(error.code, error.message)
+        raise HTTPException(401, message)
 
     token_payload_dto = TokenPayloadDTO(sub=user.email)
 

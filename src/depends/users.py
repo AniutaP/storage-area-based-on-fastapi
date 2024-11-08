@@ -2,13 +2,12 @@ from fastapi import Depends, HTTPException
 from jose import JWTError, jwt
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.database.models import UserModel
-from src.core.security import oauth2_scheme
+from src.core.security import oauth2_scheme, Hasher
 from src.dto.tokens import TokenPayloadDTO
-from src.dto.users import AdminDTO
+from src.dto.users import AdminDTO, UserDTO
 from src.repositories.users import UserRepository
 from src.services.users import UserService
 from src.core.admin import configs, admin
-from src.middlewares import HTTPErrorCodes
 from src.depends.database import get_db_session
 
 
@@ -24,11 +23,10 @@ async def get_current_user(
         token: str = Depends(oauth2_scheme),
         user_service: UserService = Depends(get_user_service),
         db_session: AsyncSession = Depends(get_db_session)
-) -> UserModel | AdminDTO:
+) -> UserDTO | AdminDTO:
 
     message = "Could not validate credentials"
-    error = HTTPErrorCodes(401, message)
-    credentials_exception =  HTTPException(error.code, error.message)
+    credentials_exception =  HTTPException(401, message)
 
     try:
         payload = jwt.decode(token, configs.SECRET_KEY, algorithms=[configs.ALGORITHM])
@@ -43,7 +41,7 @@ async def get_current_user(
     if user is None:
         raise credentials_exception
 
-    if user.email == admin.email and user.password == admin.password:
+    if user.email == admin.email:
         return admin
 
-    return user
+    return UserDTO(**{col.name: getattr(user, col.name) for col in user.__table__.columns})
