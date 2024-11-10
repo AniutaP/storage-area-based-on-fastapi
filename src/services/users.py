@@ -1,9 +1,11 @@
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.dto.users import UserDTO
+from src.dto.users import UserDTO, UserWithOrdersDTO
 from src.repositories.users import UserRepository
 from src.core.security import Hasher
+from src.services.orders import OrderService
+from dataclasses import asdict
 
 
 class UserService:
@@ -29,6 +31,14 @@ class UserService:
             raise HTTPException(404, message)
 
         return result
+
+    async def get_by_id_with_orders(self, id: str, order_service: OrderService, db_session: AsyncSession):
+        user = await self.get_by_id(id, db_session)
+        orders = await order_service.get_all(db_session, user_id=id)
+        user_data = asdict(user)
+        user = UserWithOrdersDTO(**user_data)
+        user.orders = orders
+        return user
 
     async def get_by_email(self, email: str, db_session: AsyncSession):
         return await self.repository.get_by_email(email, db_session)

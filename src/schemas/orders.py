@@ -18,6 +18,7 @@ class OrderAddSchema(BaseModel):
 
 class OrderSchema(OrderAddSchema):
     id: int
+    user_id: int
 
 
 class OrderStatusUpdateSchema(BaseModel):

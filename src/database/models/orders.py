@@ -7,8 +7,11 @@ from src.database.models.sqlalchemy_base import BaseModel
 class OrderModel(BaseModel):
     __tablename__ = "orders"
 
-    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
     status: Mapped[str]
+    created_at: Mapped[datetime] = mapped_column(server_default=func.now())
     orderitems = relationship("OrderItemModel")
 
 

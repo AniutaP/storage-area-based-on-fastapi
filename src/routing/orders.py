@@ -29,7 +29,7 @@ async def create_order(
 
     data = order.model_dump()
     orderitems = [OrderItemDTO(**item_data) for item_data in data['orderitems']]
-    order_dto = OrderDTO(status=order.status, orderitems=orderitems)
+    order_dto = OrderDTO(status=order.status, user_id=current_user.id, orderitems=orderitems)
     new_order = await order_service.create(order=order_dto, db_session=db_session)
     return OrderSchema.model_validate(new_order)
 

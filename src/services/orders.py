@@ -27,7 +27,7 @@ class OrderService:
         if check:
             return await self.repository.create(order, db_session)
 
-    async def get_all(self, db_session: AsyncSession):
+    async def get_all(self, db_session: AsyncSession, user_id: str | None = None):
         return await self.repository.get_all(db_session)
 
     async def get_by_id(self, id: str, db_session: AsyncSession):

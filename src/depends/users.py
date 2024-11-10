@@ -41,6 +41,7 @@ async def get_current_user(
         raise credentials_exception
 
     if user.email == admin.email:
-        return admin
+        user.is_superuser=True
+        return user
 
     return user
