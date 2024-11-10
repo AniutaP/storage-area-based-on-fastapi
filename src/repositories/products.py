@@ -4,35 +4,41 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.models.products import ProductModel
 from src.dto.products import ProductDTO
+from src.utils import model_to_dict
 
 
 class ProductRepository:
 
-    async def create(self, product: ProductDTO, db_session: AsyncSession) -> ProductModel:
+    async def create(self, product: ProductDTO, db_session: AsyncSession) -> ProductDTO:
         product_data = asdict(product)
         new_product = ProductModel(**product_data)
         db_session.add(new_product)
         await db_session.flush()
         await db_session.commit()
-        return new_product
+        return ProductDTO(**model_to_dict(new_product))
 
-    async def get_all(self, db_session: AsyncSession) -> list[ProductModel]:
+    async def get_all(self, db_session: AsyncSession) -> list[ProductDTO]:
         query = select(ProductModel)
         result = await db_session.scalars(query)
-        print(result)
-        products = result.all()
+        if not result:
+            return []
+        products = [ProductDTO(**model_to_dict(product)) for product in result.all()]
         return products
 
-    async def get_by_id(self, id: str, db_session: AsyncSession) -> ProductModel | None:
+    async def get_by_id(self, id: str, db_session: AsyncSession) -> ProductDTO | None:
         product = await db_session.get(ProductModel, int(id))
-        return product
+        if not product:
+            return None
+        return ProductDTO(**model_to_dict(product))
 
-    async def get_by_name(self, name: str, db_session: AsyncSession) -> ProductModel | None:
+    async def get_by_name(self, name: str, db_session: AsyncSession) -> ProductDTO | None:
         query = select(ProductModel).where(ProductModel.name == name)
         product = await db_session.scalar(query)
-        return product
+        if not product:
+            return None
+        return ProductDTO(**model_to_dict(product))
 
-    async def update_by_id(self, id: str, product: ProductDTO, db_session: AsyncSession) -> ProductModel | None:
+    async def update_by_id(self, id: str, product: ProductDTO, db_session: AsyncSession) -> ProductDTO | None:
         product_data = asdict(product)
         product_to_update = await db_session.get(ProductModel, int(id))
         for field, value in product_data.items():
@@ -41,7 +47,7 @@ class ProductRepository:
         db_session.add(product_to_update)
         await db_session.commit()
         await db_session.refresh(product_to_update)
-        return product_to_update
+        return ProductDTO(**model_to_dict(product_to_update))
 
     async def delete_by_id(self, id: str, db_session: AsyncSession) -> None:
         product_to_delete = await db_session.get(ProductModel, int(id))

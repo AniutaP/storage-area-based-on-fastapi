@@ -28,10 +28,9 @@ async def login_for_access_token(
     )
 
     if not user:
-        message = 'Incorrect username or password'
+        message = 'Incorrect email or password'
         raise HTTPException(401, message)
 
     token_payload_dto = TokenPayloadDTO(sub=user.email)
-
     access_token = create_access_token(token_payload_dto)
     return TokenSchema(access_token=access_token, token_type="bearer")

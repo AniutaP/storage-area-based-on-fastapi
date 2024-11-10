@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from datetime import datetime
 
 
 @dataclass
@@ -13,4 +14,5 @@ class OrderItemDTO:
 class OrderDTO:
     status: str
     id: int | None = None
+    created_at: datetime | None = None
     orderitems: list[OrderItemDTO] = field(default_factory=list)

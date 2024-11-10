@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.services.products import ProductService
 from src.schemas.products import ProductAddSchema, ProductSchema, ProductUpdateSchema
+from src.schemas.commons import DeleteSchema
 from src.depends.products import get_product_service
 from src.depends.database import get_db_session
 from src.depends.users import get_current_user
@@ -29,11 +30,6 @@ async def create(
 
     data = product.model_dump()
     product_dto = ProductDTO(**data)
-    product_check = await product_service.get_by_name(name=product_dto.name, db_session=db_session)
-
-    if product_check:
-        raise HTTPException(400, "Already exist")
-
     new_product = await product_service.create(product=product_dto, db_session=db_session)
     return ProductSchema.model_validate(new_product)
 
@@ -74,7 +70,7 @@ async def update_by_id(
     return ProductSchema.model_validate(product_to_update)
 
 
-@router.delete("/{id}")
+@router.delete("/{id}", response_model=DeleteSchema)
 async def delete_by_id(
         id: str, product_service: ProductService = Depends(get_product_service),
         current_user: UserDTO = Depends(get_current_user),
@@ -85,4 +81,4 @@ async def delete_by_id(
         raise HTTPException(403, message)
 
     await product_service.delete_by_id(id=id, db_session=db_session)
-    return {"Done": True}
+    return DeleteSchema

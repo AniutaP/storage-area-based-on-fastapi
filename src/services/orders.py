@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -7,9 +6,10 @@ from src.repositories.orders import OrderRepository
 from src.dto.orders import OrderDTO
 
 
-@dataclass
 class OrderService:
-    repository: OrderRepository
+
+    def __init__(self, repository: OrderRepository):
+        self.repository = repository
 
     async def check_quantity_product(self, order: OrderDTO, db_session: AsyncSession) -> bool:
         from src.depends.products import product_service

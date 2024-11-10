@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.depends.users import get_current_user
 from src.services.orders import OrderService
-from src.schemas.orders import OrderAddSchema, OrderSchema,OrderStatusUpdateSchema
+from src.schemas.orders import OrderAddSchema, OrderSchema, OrderStatusUpdateSchema
 from src.depends.orders import get_order_service
 from src.depends.database import get_db_session
 from src.dto.orders import OrderDTO, OrderItemDTO
@@ -24,7 +24,7 @@ async def create_order(
         db_session: AsyncSession = Depends(get_db_session)
 ):
     if not current_user:
-        message = "Unauthorized"
+        message = "Not authenticated"
         raise HTTPException(401, message)
 
     data = order.model_dump()

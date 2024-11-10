@@ -1,18 +1,21 @@
-# Используем официальный образ Python
 FROM python:3.12
 
-# Устанавливаем рабочую директорию внутри контейнера
+RUN apt-get update && apt-get install -y curl
+
+RUN curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.6.1 POETRY_HOME=/root/poetry python3 -
+ENV PATH="${PATH}:/root/poetry/bin"
+
 WORKDIR /app
 ENV PYTHONPATH="${PYTHONPATH}:/app"
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
-# Копируем файл зависимостей и устанавливаем их
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY poetry.lock pyproject.toml /app/
+RUN poetry config virtualenvs.create false && \
+    poetry install --no-interaction --no-ansi
 
-# Устанавливаем PostgreSQL клиентские инструменты
 RUN apt-get update && apt-get install -y postgresql-client
 
-# Копируем код приложения в рабочую директорию
 COPY . .
 
 CMD ["uvicorn", "src:app", "--host", "0.0.0.0", "--port", "8000"]

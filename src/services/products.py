@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -6,11 +5,15 @@ from src.dto.products import ProductDTO
 from src.repositories.products import ProductRepository
 
 
-@dataclass
 class ProductService:
-    repository: ProductRepository
+    def __init__(self, repository: ProductRepository):
+        self.repository = repository
 
     async def create(self, product: ProductDTO, db_session: AsyncSession):
+        product_check = await self.get_by_name(name=product.name, db_session=db_session)
+        if product_check:
+            raise HTTPException(400, "Already exist")
+
         return await self.repository.create(product, db_session)
 
     async def get_all(self, db_session: AsyncSession):
@@ -21,6 +24,7 @@ class ProductService:
         if result is None:
             message = f'Object with id {id} not found'
             raise HTTPException(404, message)
+
         return result
 
     async def get_by_name(self, name: str, db_session: AsyncSession):

@@ -1,8 +1,7 @@
 from fastapi import Depends, HTTPException
 from jose import JWTError, jwt
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.database.models import UserModel
-from src.core.security import oauth2_scheme, Hasher
+from src.core.security import oauth2_scheme
 from src.dto.tokens import TokenPayloadDTO
 from src.dto.users import AdminDTO, UserDTO
 from src.repositories.users import UserRepository
@@ -37,11 +36,11 @@ async def get_current_user(
     except JWTError:
         raise credentials_exception
 
-    user: UserModel = await user_service.get_by_email(email=email, db_session=db_session)
+    user = await user_service.get_by_email(email=email, db_session=db_session)
     if user is None:
         raise credentials_exception
 
     if user.email == admin.email:
         return admin
 
-    return UserDTO(**{col.name: getattr(user, col.name) for col in user.__table__.columns})
+    return user

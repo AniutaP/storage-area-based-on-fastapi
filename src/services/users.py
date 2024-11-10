@@ -1,16 +1,22 @@
-from dataclasses import dataclass
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.dto.users import UserDTO
 from src.repositories.users import UserRepository
+from src.core.security import Hasher
 
 
-@dataclass
 class UserService:
-    repository: UserRepository
+
+    def __init__(self, repository: UserRepository):
+        self.repository = repository
 
     async def create(self, user: UserDTO, db_session: AsyncSession):
+        user_check = await self.get_by_email(email=user.email, db_session=db_session)
+        if user_check:
+            raise HTTPException(400, "User already registered")
+
+        user.password = Hasher.get_password_hash(user.password)
         return await self.repository.create(user, db_session)
 
     async def get_all(self, db_session: AsyncSession):
@@ -21,6 +27,7 @@ class UserService:
         if result is None:
             message = f'User with id {id} not found'
             raise HTTPException(404, message)
+
         return result
 
     async def get_by_email(self, email: str, db_session: AsyncSession):

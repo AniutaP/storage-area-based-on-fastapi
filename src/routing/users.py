@@ -3,10 +3,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.services.users import UserService
 from src.schemas.users import UserAddSchema, UserSchema, UserUpdateSchema
+from src.schemas.commons import DeleteSchema
 from src.depends.users import get_user_service, get_current_user
 from src.depends.database import get_db_session
 from src.dto.users import UserDTO
-from src.core.security import Hasher
 
 
 router = APIRouter(
@@ -23,12 +23,6 @@ async def create(
 ):
     data = user.model_dump()
     user_dto = UserDTO(**data)
-    user_check = await user_service.get_by_email(email=user_dto.email, db_session=db_session)
-
-    if user_check:
-        raise HTTPException(400, "User already registered")
-
-    user_dto.password = Hasher.get_password_hash(user_dto.password)
     new_user = await user_service.create(user=user_dto, db_session=db_session)
     return UserSchema.model_validate(new_user)
 
@@ -68,7 +62,7 @@ async def update_by_id(
     return UserSchema.model_validate(user_to_update)
 
 
-@router.delete("/{id}")
+@router.delete("/{id}", response_model=DeleteSchema)
 async def delete_by_id(
         id: str, user_service: UserService = Depends(get_user_service),
         current_user: UserDTO = Depends(get_current_user),
@@ -79,4 +73,4 @@ async def delete_by_id(
         raise HTTPException(403, message)
 
     await user_service.delete_by_id(id=id, db_session=db_session)
-    return {"Done": True}
+    return DeleteSchema
