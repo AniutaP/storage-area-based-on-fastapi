@@ -43,10 +43,10 @@ class OrderRepository:
             )
         )
 
-        orders_to_dto = OrderDTO(**model_to_dict(result_order))
-        orders_to_dto.orderitems = [OrderItemDTO(**model_to_dict(item)) for item in result_order.orderitems]
+        order_to_dto = OrderDTO(**model_to_dict(result_order))
+        order_to_dto.orderitems = [OrderItemDTO(**model_to_dict(item)) for item in result_order.orderitems]
         await db_session.commit()
-        return orders_to_dto
+        return order_to_dto
 
     async def get_all(self, db_session: AsyncSession, user_id: int | None = None) -> list[OrderDTO]:
         if user_id:
@@ -57,15 +57,15 @@ class OrderRepository:
         result = await db_session.execute(
             query.options(joinedload(OrderModel.orderitems)).order_by(desc(OrderModel.created_at))
         )
-        result = result.unique().scalars().all()
-        if not result:
+        query_result = result.unique().scalars().all()
+        if not query_result:
             return []
 
         orders_to_dto = []
-        for result_order in result:
-            order = OrderDTO(**model_to_dict(result_order))
-            order.orderitems = [OrderItemDTO(**model_to_dict(item)) for item in result_order.orderitems]
-            orders_to_dto.append(order)
+        for order in query_result:
+            order_to_dto = OrderDTO(**model_to_dict(order))
+            order_to_dto.orderitems = [OrderItemDTO(**model_to_dict(item)) for item in order.orderitems]
+            orders_to_dto.append(order_to_dto)
 
         return orders_to_dto
 

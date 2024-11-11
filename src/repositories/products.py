@@ -21,8 +21,8 @@ class ProductRepository:
         result = await db_session.scalars(query)
         if not result:
             return []
-        products = [ProductDTO(**model_to_dict(product)) for product in result.all()]
-        return products
+        products_to_dto = [ProductDTO(**model_to_dict(product)) for product in result.all()]
+        return products_to_dto
 
     async def get_by_id(self, id: int, db_session: AsyncSession) -> ProductDTO | None:
         product = await db_session.get(ProductModel, id)

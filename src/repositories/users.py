@@ -21,8 +21,8 @@ class UserRepository:
         result = await db_session.scalars(query)
         if not result:
             return []
-        users = [UserDTO(**model_to_dict(user)) for user in result.all()]
-        return users
+        users_to_dto = [UserDTO(**model_to_dict(user)) for user in result.all()]
+        return users_to_dto
 
     async def get_by_id(self, id: int, db_session: AsyncSession) -> UserDTO | None:
         user = await db_session.get(UserModel, id)
