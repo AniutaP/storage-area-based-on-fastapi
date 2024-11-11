@@ -50,7 +50,7 @@ class OrderRepository:
 
     async def get_all(self, db_session: AsyncSession, user_id: int | None = None) -> list[OrderDTO]:
         if user_id:
-            query = (select(OrderModel).where(OrderModel.user_id == user_id))
+            query = select(OrderModel).where(OrderModel.user_id == user_id)
         else:
             query = select(OrderModel)
 
