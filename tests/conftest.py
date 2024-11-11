@@ -51,7 +51,9 @@ def override_get_db_session(db_session: AsyncSession):
 @pytest.fixture(scope="session")
 def override_get_current_user():
     def _override_get_current_user():
-        user = UserDTO(id=1, email=os.getenv('ADMIN_EMAIL'), password=os.getenv('ADMIN_PASSWORD'), is_superuser=True)
+        user = UserDTO(
+            id=1, email=os.getenv('ADMIN_EMAIL'), password=os.getenv('ADMIN_PASSWORD'), is_superuser=True
+        )
         return user
     return _override_get_current_user
 
