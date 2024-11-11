@@ -9,9 +9,9 @@ async def get_db_session() -> AsyncGenerator:
         try:
             yield session
 
-        except IntegrityError as e:
+        except IntegrityError:
             await session.rollback()
-            message = e.args[0]
+            message = 'IntegrityError occurred'
             raise HTTPException(422, message)
         except Exception:
             await session.rollback()
