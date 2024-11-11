@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, desc
 from sqlalchemy.orm import joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.database.models.orders import OrderModel, OrderItemModel
@@ -48,14 +48,14 @@ class OrderRepository:
         await db_session.commit()
         return orders_to_dto
 
-    async def get_all(self, db_session: AsyncSession, user_id: str | None = None) -> list[OrderDTO]:
+    async def get_all(self, db_session: AsyncSession, user_id: int | None = None) -> list[OrderDTO]:
         if user_id:
-            query = select(OrderModel).where(OrderModel.user_id == int(user_id))
+            query = (select(OrderModel).where(OrderModel.user_id == user_id))
         else:
             query = select(OrderModel)
 
         result = await db_session.execute(
-            query.options(joinedload(OrderModel.orderitems))
+            query.options(joinedload(OrderModel.orderitems)).order_by(desc(OrderModel.created_at))
         )
         result = result.unique().scalars().all()
         if not result:
@@ -69,8 +69,8 @@ class OrderRepository:
 
         return orders_to_dto
 
-    async def get_by_id(self, id: str, db_session: AsyncSession) -> OrderDTO | None:
-        query = select(OrderModel).where(OrderModel.id == int(id))
+    async def get_by_id(self, id: int, db_session: AsyncSession) -> OrderDTO | None:
+        query = select(OrderModel).where(OrderModel.id == id)
         result = await db_session.scalar(
             query.options(joinedload(OrderModel.orderitems))
         )
@@ -81,9 +81,9 @@ class OrderRepository:
         order_to_dto.orderitems = [OrderItemDTO(**model_to_dict(item)) for item in result.orderitems]
         return order_to_dto
 
-    async def update_status_by_id(self, id: str, order: OrderDTO, db_session: AsyncSession) -> OrderDTO:
+    async def update_status_by_id(self, order: OrderDTO, db_session: AsyncSession) -> OrderDTO:
         order_new_status = order.status
-        order_to_update = await db_session.get(OrderModel, int(id))
+        order_to_update = await db_session.get(OrderModel, order.id)
         if order_new_status:
             setattr(order_to_update, 'status', order_new_status)
         db_session.add(order_to_update)

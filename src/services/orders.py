@@ -30,13 +30,13 @@ class OrderService:
     async def get_all(self, db_session: AsyncSession, user_id: str | None = None):
         return await self.repository.get_all(db_session)
 
-    async def get_by_id(self, id: str, db_session: AsyncSession):
+    async def get_by_id(self, id: int, db_session: AsyncSession):
         result = await self.repository.get_by_id(id, db_session)
         if result is None:
             message = f'Object with id {id} not found'
             raise HTTPException(404, message)
         return result
 
-    async def update_status_by_id(self, id: str, order: OrderDTO, db_session: AsyncSession):
-        await self.get_by_id(id, db_session)
-        return await self.repository.update_status_by_id(id, order, db_session)
+    async def update_status_by_id(self, order: OrderDTO, db_session: AsyncSession):
+        await self.get_by_id(order.id, db_session)
+        return await self.repository.update_status_by_id(order, db_session)

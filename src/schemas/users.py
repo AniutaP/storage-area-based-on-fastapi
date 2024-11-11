@@ -20,7 +20,12 @@ class UserSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class UserIdSchema(BaseModel):
+    id: int
+
+
 class UserUpdateSchema(BaseModel):
+    id: int
     name: str | None = Field(default=None)
     email: EmailStr | None = Field(default=None)
     password: int | None = Field(default=None, min_length=5)

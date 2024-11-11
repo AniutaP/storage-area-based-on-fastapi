@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.services.products import ProductService
-from src.schemas.products import ProductAddSchema, ProductSchema, ProductUpdateSchema
+from src.schemas.products import ProductAddSchema, ProductSchema, ProductUpdateSchema, ProductIdSchema
 from src.schemas.commons import DeleteSchema
 from src.depends.products import get_product_service
 from src.depends.database import get_db_session
@@ -45,16 +45,17 @@ async def get_all(
 
 @router.get("/{id}", response_model=ProductSchema)
 async def get_by_id(
-        id: str, product_service: ProductService = Depends(get_product_service),
+        product: ProductIdSchema = Depends(),
+        product_service: ProductService = Depends(get_product_service),
         db_session: AsyncSession = Depends(get_db_session)
 ):
-    product = await product_service.get_by_id(id=id, db_session=db_session)
+    product_id = product.model_dump().get('id')
+    product = await product_service.get_by_id(id=product_id, db_session=db_session)
     return ProductSchema.model_validate(product)
 
 
 @router.put("/{id}", response_model=ProductSchema)
 async def update_by_id(
-        id: str,
         product: ProductUpdateSchema = Depends(),
         current_user: UserDTO = Depends(get_current_user),
         product_service: ProductService = Depends(get_product_service),
@@ -66,13 +67,14 @@ async def update_by_id(
 
     data = product.model_dump()
     product_dto = ProductDTO(**data)
-    product_to_update = await product_service.update_by_id(id=id, product=product_dto, db_session=db_session)
+    product_to_update = await product_service.update_by_id(product=product_dto, db_session=db_session)
     return ProductSchema.model_validate(product_to_update)
 
 
 @router.delete("/{id}", response_model=DeleteSchema)
 async def delete_by_id(
-        id: str, product_service: ProductService = Depends(get_product_service),
+        product: ProductIdSchema = Depends(),
+        product_service: ProductService = Depends(get_product_service),
         current_user: UserDTO = Depends(get_current_user),
         db_session: AsyncSession = Depends(get_db_session)
 ):
@@ -80,5 +82,6 @@ async def delete_by_id(
         message = "Forbidden: You do not have permission to perform this action"
         raise HTTPException(403, message)
 
-    await product_service.delete_by_id(id=id, db_session=db_session)
+    product_id = product.model_dump().get('id')
+    await product_service.delete_by_id(id=product_id, db_session=db_session)
     return DeleteSchema

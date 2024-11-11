@@ -10,8 +10,7 @@ from src.utils import model_to_dict
 class UserRepository:
 
     async def create(self, user: UserDTO, db_session: AsyncSession) -> UserDTO:
-        user_data = asdict(user)
-        new_user = UserModel(**user_data)
+        new_user = UserModel(**asdict(user))
         db_session.add(new_user)
         await db_session.flush()
         await db_session.commit()
@@ -25,8 +24,8 @@ class UserRepository:
         users = [UserDTO(**model_to_dict(user)) for user in result.all()]
         return users
 
-    async def get_by_id(self, id: str, db_session: AsyncSession) -> UserDTO | None:
-        user = await db_session.get(UserModel, int(id))
+    async def get_by_id(self, id: int, db_session: AsyncSession) -> UserDTO | None:
+        user = await db_session.get(UserModel, id)
         if not user:
             return None
         return UserDTO(**model_to_dict(user))
@@ -38,9 +37,9 @@ class UserRepository:
             return None
         return UserDTO(**model_to_dict(user))
 
-    async def update_by_id(self, id: str, user: UserDTO, db_session: AsyncSession) -> UserDTO | None:
+    async def update_by_id(self, user: UserDTO, db_session: AsyncSession) -> UserDTO | None:
         user_data = asdict(user)
-        user_to_update = await db_session.get(UserModel, int(id))
+        user_to_update = await db_session.get(UserModel, user.id)
         for field, value in user_data.items():
             if value:
                 setattr(user_to_update, field, user_data[field])
@@ -49,7 +48,7 @@ class UserRepository:
         await db_session.refresh(user_to_update)
         return UserDTO(**model_to_dict(user_to_update))
 
-    async def delete_by_id(self, id: str, db_session: AsyncSession) -> None:
-        user_to_delete = await db_session.get(UserModel, int(id))
+    async def delete_by_id(self, id: int, db_session: AsyncSession) -> None:
+        user_to_delete = await db_session.get(UserModel, id)
         await db_session.delete(user_to_delete)
         await db_session.commit()

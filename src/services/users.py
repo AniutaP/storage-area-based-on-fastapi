@@ -24,7 +24,7 @@ class UserService:
     async def get_all(self, db_session: AsyncSession):
         return await self.repository.get_all(db_session)
 
-    async def get_by_id(self, id: str, db_session: AsyncSession):
+    async def get_by_id(self, id: int, db_session: AsyncSession):
         result = await self.repository.get_by_id(id, db_session)
         if result is None:
             message = f'User with id {id} not found'
@@ -32,7 +32,7 @@ class UserService:
 
         return result
 
-    async def get_by_id_with_orders(self, id: str, order_service: OrderService, db_session: AsyncSession):
+    async def get_by_id_with_orders(self, id: int, order_service: OrderService, db_session: AsyncSession):
         user = await self.get_by_id(id, db_session)
         orders = await order_service.get_all(db_session, user_id=id)
         user_data = asdict(user)
@@ -43,10 +43,10 @@ class UserService:
     async def get_by_email(self, email: str, db_session: AsyncSession):
         return await self.repository.get_by_email(email, db_session)
 
-    async def update_by_id(self, id: str, user: UserDTO, db_session: AsyncSession):
-        await self.get_by_id(id, db_session)
-        return await self.repository.update_by_id(id, user, db_session)
+    async def update_by_id(self, user: UserDTO, db_session: AsyncSession):
+        await self.get_by_id(user.id, db_session)
+        return await self.repository.update_by_id(user, db_session)
 
-    async def delete_by_id(self, id: str, db_session: AsyncSession):
+    async def delete_by_id(self, id: int, db_session: AsyncSession):
         await self.get_by_id(id, db_session)
         return await self.repository.delete_by_id(id, db_session)

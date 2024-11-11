@@ -21,8 +21,11 @@ class OrderSchema(OrderAddSchema):
     user_id: int
 
 
-class OrderStatusUpdateSchema(BaseModel):
+class OrderIdSchema(BaseModel):
     id: int
-    status: str
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class OrderStatusUpdateSchema(OrderIdSchema):
+    status: str

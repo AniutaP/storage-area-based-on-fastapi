@@ -5,22 +5,24 @@ from src.database.models.sqlalchemy_base import BaseModel
 
 
 class OrderModel(BaseModel):
-    __tablename__ = "orders"
+    __tablename__ = 'orders'
 
     user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+        ForeignKey('users.id', ondelete='CASCADE'), nullable=False
     )
     status: Mapped[str]
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
-    orderitems = relationship("OrderItemModel")
+    orderitems = relationship('OrderItemModel')
 
 
 class OrderItemModel(BaseModel):
-    __tablename__ = "orderitems"
-    __table_args__ = (UniqueConstraint('order_id', 'product_id'),)
+    __tablename__ = 'orderitems'
+    __table_args__ = (
+        UniqueConstraint('order_id', 'product_id'),
+    )
 
     quantity: Mapped[int]
     order_id: Mapped[int] = mapped_column(
-        ForeignKey("orders.id", ondelete="CASCADE"), nullable=False
+        ForeignKey('orders.id', ondelete='CASCADE'), nullable=False
     )
-    product_id: Mapped[int] = mapped_column(ForeignKey("products.id"), nullable=False)
+    product_id: Mapped[int] = mapped_column(ForeignKey('products.id'), nullable=False)

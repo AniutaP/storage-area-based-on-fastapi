@@ -14,7 +14,12 @@ class ProductSchema(ProductAddSchema):
     id: int
 
 
+class ProductIdSchema(BaseModel):
+    id: int
+
+
 class ProductUpdateSchema(BaseModel):
+    id: int
     name: str | None = Field(default=None)
     description: str | None = Field(default=None)
     price: int | None = Field(default=None, ge=0)

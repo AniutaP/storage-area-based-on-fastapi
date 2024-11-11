@@ -10,8 +10,7 @@ from src.utils import model_to_dict
 class ProductRepository:
 
     async def create(self, product: ProductDTO, db_session: AsyncSession) -> ProductDTO:
-        product_data = asdict(product)
-        new_product = ProductModel(**product_data)
+        new_product = ProductModel(**asdict(product))
         db_session.add(new_product)
         await db_session.flush()
         await db_session.commit()
@@ -25,8 +24,8 @@ class ProductRepository:
         products = [ProductDTO(**model_to_dict(product)) for product in result.all()]
         return products
 
-    async def get_by_id(self, id: str, db_session: AsyncSession) -> ProductDTO | None:
-        product = await db_session.get(ProductModel, int(id))
+    async def get_by_id(self, id: int, db_session: AsyncSession) -> ProductDTO | None:
+        product = await db_session.get(ProductModel, id)
         if not product:
             return None
         return ProductDTO(**model_to_dict(product))
@@ -38,9 +37,9 @@ class ProductRepository:
             return None
         return ProductDTO(**model_to_dict(product))
 
-    async def update_by_id(self, id: str, product: ProductDTO, db_session: AsyncSession) -> ProductDTO | None:
+    async def update_by_id(self, product: ProductDTO, db_session: AsyncSession) -> ProductDTO | None:
         product_data = asdict(product)
-        product_to_update = await db_session.get(ProductModel, int(id))
+        product_to_update = await db_session.get(ProductModel, product.id)
         for field, value in product_data.items():
             if value:
                 setattr(product_to_update, field, product_data[field])
@@ -49,7 +48,7 @@ class ProductRepository:
         await db_session.refresh(product_to_update)
         return ProductDTO(**model_to_dict(product_to_update))
 
-    async def delete_by_id(self, id: str, db_session: AsyncSession) -> None:
-        product_to_delete = await db_session.get(ProductModel, int(id))
+    async def delete_by_id(self, id: int, db_session: AsyncSession) -> None:
+        product_to_delete = await db_session.get(ProductModel, id)
         await db_session.delete(product_to_delete)
         await db_session.commit()
