@@ -14,3 +14,4 @@ def get_all_routes():
     router.include_router(order_router)
 
     return router
+

@@ -8,6 +8,7 @@ from src.repositories.users import UserRepository
 from src.services.users import UserService
 from src.core.admin import configs, admin
 from src.depends.database import get_db_session
+from src.core.settings import hawk
 
 
 user_repository = UserRepository()
@@ -25,7 +26,7 @@ async def get_current_user(
 ) -> UserDTO | AdminDTO:
 
     message = "Could not validate credentials"
-    credentials_exception =  HTTPException(401, message)
+    credentials_exception = HTTPException(401, message)
 
     try:
         payload = jwt.decode(token, configs.SECRET_KEY, algorithms=[configs.ALGORITHM])
@@ -34,6 +35,7 @@ async def get_current_user(
         if email is None:
             raise credentials_exception
     except JWTError:
+        hawk.send(JWTError("error description"), {"params": "value"})
         raise credentials_exception
 
     user = await user_service.get_by_email(email=email, db_session=db_session)

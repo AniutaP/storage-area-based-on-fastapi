@@ -1,6 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.core.settings import hawk
 from src.dto.users import UserDTO, UserWithOrdersDTO
 from src.repositories.users import UserRepository
 from src.core.security import Hasher
@@ -28,6 +29,7 @@ class UserService:
         result = await self.repository.get_by_id(id, db_session)
         if result is None:
             message = f'User with id {id} not found'
+            hawk.send(HTTPException(404, message))
             raise HTTPException(404, message)
 
         return result

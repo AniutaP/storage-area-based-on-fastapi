@@ -3,10 +3,12 @@ from src.database.models.sqlalchemy_base import BaseModel
 import pytest_asyncio
 from httpx import AsyncClient, ASGITransport
 from src.app import app
-from src.routing.routes import get_all_routes
+from src.depends.users import get_current_user
+from src.routing import get_all_routes
 from src.database.database import setup_database
-from src.depends.depends import get_db_session
+from src.depends.database import get_db_session
 from sqlalchemy.ext.asyncio import AsyncSession
+from src.dto.users import UserDTO
 import os
 from dotenv import load_dotenv
 import json
@@ -46,8 +48,17 @@ def override_get_db_session(db_session: AsyncSession):
     return _override_get_db
 
 
+@pytest.fixture(scope="session")
+def override_get_current_user():
+    def _override_get_current_user():
+        user = UserDTO(id=1, email=os.getenv('ADMIN_EMAIL'), password=os.getenv('ADMIN_PASSWORD'), is_superuser=True)
+        return user
+    return _override_get_current_user
+
+
 @pytest_asyncio.fixture(loop_scope="session")
-async def async_client(override_get_db_session):
+async def async_client(override_get_db_session, override_get_current_user):
     app.dependency_overrides[get_db_session] = override_get_db_session
+    app.dependency_overrides[get_current_user] = override_get_current_user
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://127.0.0.1") as ac:
         yield ac

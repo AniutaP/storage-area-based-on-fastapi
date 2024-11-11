@@ -3,8 +3,6 @@ from fastapi.responses import HTMLResponse
 
 from src.routing import get_all_routes
 
-
-
 app = FastAPI()
 app.include_router(get_all_routes())
 

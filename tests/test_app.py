@@ -1,6 +1,8 @@
 import pytest
-from src.depends.depends import product_service, order_service
+from src.depends.products import product_service
+from src.depends.orders import order_service
 from src.dto.orders import OrderDTO, OrderItemDTO
+from src.dto.users import UserDTO
 from src.schemas.orders import OrderSchema
 from src.schemas.products import ProductSchema
 from httpx import AsyncClient
@@ -55,10 +57,10 @@ async def test_get_product_by_id(async_client: AsyncClient, db_session: AsyncSes
 
 
 @pytest.mark.asyncio(loop_scope="session")
-async def test_create_order(db_session: AsyncSession):
+async def test_create_order(async_client: AsyncClient, db_session: AsyncSession):
     test_data = test_data_orders['input_data_create']
     orderitems = [OrderItemDTO(**item_data) for item_data in test_data['orderitems']]
-    order_dto = OrderDTO(status=test_data['status'], orderitems=orderitems)
+    order_dto = OrderDTO(status=test_data['status'], user_id=test_data['user_id'], orderitems=orderitems)
     result = await order_service.create(order_dto, db_session)
     res = OrderSchema.model_validate(result).model_dump()
     assert res == test_data_orders['create_example']

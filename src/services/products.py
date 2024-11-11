@@ -1,6 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.core.settings import hawk
 from src.dto.products import ProductDTO
 from src.repositories.products import ProductRepository
 
@@ -12,6 +13,7 @@ class ProductService:
     async def create(self, product: ProductDTO, db_session: AsyncSession):
         product_check = await self.get_by_name(name=product.name, db_session=db_session)
         if product_check:
+            hawk.send(HTTPException(400, "Already exist"))
             raise HTTPException(400, "Already exist")
 
         return await self.repository.create(product, db_session)
@@ -23,6 +25,7 @@ class ProductService:
         result = await self.repository.get_by_id(id, db_session)
         if result is None:
             message = f'Object with id {id} not found'
+            hawk.send(HTTPException(404, message))
             raise HTTPException(404, message)
 
         return result

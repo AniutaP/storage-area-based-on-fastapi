@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.core.settings import hawk
 from src.depends.orders import get_order_service
 from src.services.orders import OrderService
 from src.services.users import UserService
@@ -76,6 +77,7 @@ async def update_by_id(
         return UserSchema.model_validate(user_to_update)
 
     message = "Forbidden: You do not have permission to perform this action"
+    hawk.send(HTTPException(403, message))
     raise HTTPException(403, message)
 
 
@@ -92,4 +94,5 @@ async def delete_by_id(
         return DeleteSchema
 
     message = "Forbidden: You do not have permission to perform this action"
+    hawk.send(HTTPException(403, message))
     raise HTTPException(403, message)

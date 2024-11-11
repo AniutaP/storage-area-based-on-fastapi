@@ -1,6 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.core.settings import hawk
 from src.repositories.orders import OrderRepository
 from src.dto.orders import OrderDTO
 
@@ -19,6 +20,7 @@ class OrderService:
             quantity_product_in_db = product_model.quantity
             if orderitem.quantity > quantity_product_in_db:
                 message = f'Quantity product with id: {orderitem.product_id} exceeds stock availability'
+                hawk.send(HTTPException(422, message))
                 raise HTTPException(422, message)
         return True
 
@@ -27,13 +29,14 @@ class OrderService:
         if check:
             return await self.repository.create(order, db_session)
 
-    async def get_all(self, db_session: AsyncSession, user_id: str | None = None):
-        return await self.repository.get_all(db_session)
+    async def get_all(self, db_session: AsyncSession, user_id: int | None = None):
+        return await self.repository.get_all(db_session, user_id)
 
     async def get_by_id(self, id: int, db_session: AsyncSession):
         result = await self.repository.get_by_id(id, db_session)
         if result is None:
             message = f'Object with id {id} not found'
+            hawk.send(HTTPException(404, message))
             raise HTTPException(404, message)
         return result
 
