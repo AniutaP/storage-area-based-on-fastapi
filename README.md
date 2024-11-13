@@ -6,6 +6,8 @@ The API allows you to manage goods, inventory, and orders.
 This application based on the FastApi framework with database support using SQLAlchemy 2.0.
 
 ### Endpoints
+* Login (POST /login/token)
+* Users ((POST /users), (GET /users), (GET /users/{id}), (GET /users/{id}/orders), (PUT /users/{id}), (DELETE /users/{id}))
 * Products ((POST /products), (GET /products), (GET /products/{id}), (PUT /products/{id}), (DELETE /products/{id}))
 * Orders ((POST /orders), (GET /orders), (GET /orders/{id}), PATCH /orders/{id}/status))
 
