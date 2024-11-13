@@ -1,14 +1,14 @@
 import pytest
-from src.database.models.sqlalchemy_base import BaseModel
+from src.core.database.models.sqlalchemy_base import BaseModel
 import pytest_asyncio
 from httpx import AsyncClient, ASGITransport
 from src.app import app
 from src.depends.users import get_current_user
 from src.routing import get_all_routes
-from src.database.database import setup_database
+from src.core.database.database import setup_database
 from src.depends.database import get_db_session
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.dto.users import UserDTO
+from src.domains.users.dto.users import UserDTO
 import os
 from dotenv import load_dotenv
 import json

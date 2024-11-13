@@ -1,16 +1,16 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.services.products import ProductService
-from src.schemas.products import (
+from src.domains.products.service import ProductService
+from src.domains.products.schemas.products import (
     ProductAddSchema, ProductSchema, ProductUpdateSchema, ProductIdSchema
 )
-from src.schemas.commons import DeleteSchema
+from src.domains.products.schemas.products import DeleteSchema
 from src.depends.products import get_product_service
 from src.depends.database import get_db_session
 from src.depends.users import get_current_user
-from src.dto.products import ProductDTO
-from src.dto.users import UserDTO
+from src.domains.products.dto.products import ProductDTO
+from src.domains.users.dto.users import UserDTO
 
 
 router = APIRouter(

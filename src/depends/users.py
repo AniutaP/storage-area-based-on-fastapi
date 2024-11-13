@@ -1,15 +1,14 @@
 from fastapi import Depends, HTTPException
 from jose import JWTError, jwt
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.core.security import oauth2_scheme
-from src.dto.tokens import TokenPayloadDTO
-from src.dto.users import AdminDTO, UserDTO
-from src.repositories.users import UserRepository
-from src.services.users import UserService
-from src.core.admin import configs, admin
+from src.security.tokens.dto.tokens import TokenPayloadDTO
+from src.domains.users.dto.users import AdminDTO, UserDTO
+from src.domains.users.repository import UserRepository
+from src.domains.users.service import UserService
+from src.domains.users.dto.admin import configs, admin
 from src.depends.database import get_db_session
-from src.core.settings import hawk
-
+from src.configs.settings import hawk
+from src.security.tokens.service import oauth2_scheme
 
 user_repository = UserRepository()
 user_service = UserService(user_repository)

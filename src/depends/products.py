@@ -1,5 +1,5 @@
-from src.repositories.products import ProductRepository
-from src.services.products import ProductService
+from src.domains.products.repository import ProductRepository
+from src.domains.products.service import ProductService
 
 
 product_repository = ProductRepository()

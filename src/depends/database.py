@@ -1,8 +1,8 @@
 from typing import AsyncGenerator
 from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
-from src.core.settings import database
-from src.core.settings import hawk
+from src.configs.settings import database
+from src.configs.settings import hawk
 
 
 async def get_db_session() -> AsyncGenerator:

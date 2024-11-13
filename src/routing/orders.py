@@ -2,14 +2,14 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.depends.users import get_current_user
-from src.services.orders import OrderService
-from src.schemas.orders import (
+from src.domains.orders.service import OrderService
+from src.domains.orders.schemas.orders import (
     OrderAddSchema, OrderSchema, OrderStatusUpdateSchema, OrderIdSchema
 )
 from src.depends.orders import get_order_service
 from src.depends.database import get_db_session
-from src.dto.orders import OrderDTO, OrderItemDTO
-from src.dto.users import UserDTO
+from src.domains.orders.dto.orders import OrderDTO, OrderItemDTO
+from src.domains.users.dto.users import UserDTO
 
 
 router = APIRouter(

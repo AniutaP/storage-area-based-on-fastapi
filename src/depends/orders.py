@@ -1,5 +1,5 @@
-from src.repositories.orders import OrderRepository
-from src.services.orders import OrderService
+from src.domains.orders.repository import OrderRepository
+from src.domains.orders.service import OrderService
 
 
 order_repository = OrderRepository()

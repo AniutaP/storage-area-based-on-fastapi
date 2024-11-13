@@ -1,14 +1,13 @@
 import pytest
 from src.depends.products import product_service
 from src.depends.orders import order_service
-from src.dto.orders import OrderDTO, OrderItemDTO
-from src.dto.users import UserDTO
-from src.schemas.orders import OrderSchema
-from src.schemas.products import ProductSchema
+from src.domains.orders.dto.orders import OrderDTO, OrderItemDTO
+from src.domains.orders.schemas.orders import OrderSchema
+from src.domains.products.schemas.products import ProductSchema
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 from tests.conftest import load_data
-from src.dto.products import ProductDTO
+from src.domains.products.dto.products import ProductDTO
 
 
 test_data_products = load_data('products.json')
@@ -71,4 +70,4 @@ async def test_create_order_bad_quantity(async_client: AsyncClient, db_session: 
     data = test_data_orders['input_bad_quantity']
     response = await async_client.post("/orders/", params=data["params"], json=data['orderitems'])
     assert response.status_code == 422
-    assert response.json()['detail'] == 'Quantity product with id: 1 exceeds stock availability'
+    assert response.json()['detail'] == 'Quantity product with id: 1 unavailable'
