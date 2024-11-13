@@ -1,5 +1,6 @@
 from pydantic import BaseModel, ConfigDict
 
+
 class DeleteSchema(BaseModel):
     status_process: str = "Done"
 

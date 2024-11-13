@@ -23,12 +23,19 @@ class Hasher:
         return pwd_context.hash(password)
 
 
-def create_access_token(token_payload_dto: TokenPayloadDTO, expires_delta: Optional[timedelta] = None) -> str:
+def create_access_token(
+        token_payload_dto: TokenPayloadDTO,
+        expires_delta: Optional[timedelta] = None
+) -> str:
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
     else:
-        expire = datetime.now(timezone.utc) + timedelta(minutes=configs.ACCESS_TOKEN_EXPIRE_MINUTES)
+        expire = datetime.now(timezone.utc) + timedelta(
+            minutes=configs.ACCESS_TOKEN_EXPIRE_MINUTES
+        )
     token_payload_dto.exp = expire
     to_encode = asdict(token_payload_dto)
-    encoded_jwt = jwt.encode(to_encode, configs.SECRET_KEY, algorithm=configs.ALGORITHM)
+    encoded_jwt = jwt.encode(
+        to_encode, configs.SECRET_KEY, algorithm=configs.ALGORITHM
+    )
     return encoded_jwt

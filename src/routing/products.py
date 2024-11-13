@@ -2,7 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.services.products import ProductService
-from src.schemas.products import ProductAddSchema, ProductSchema, ProductUpdateSchema, ProductIdSchema
+from src.schemas.products import (
+    ProductAddSchema, ProductSchema, ProductUpdateSchema, ProductIdSchema
+)
 from src.schemas.commons import DeleteSchema
 from src.depends.products import get_product_service
 from src.depends.database import get_db_session
@@ -67,7 +69,9 @@ async def update_by_id(
 
     data = product.model_dump()
     product_dto = ProductDTO(**data)
-    product_to_update = await product_service.update_by_id(product=product_dto, db_session=db_session)
+    product_to_update = await product_service.update_by_id(
+        product=product_dto, db_session=db_session
+    )
     return ProductSchema.model_validate(product_to_update)
 
 

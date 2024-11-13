@@ -34,7 +34,9 @@ class UserService:
 
         return result
 
-    async def get_by_id_with_orders(self, id: int, order_service: OrderService, db_session: AsyncSession):
+    async def get_by_id_with_orders(
+            self, id: int, order_service: OrderService, db_session: AsyncSession
+    ):
         user = await self.get_by_id(id, db_session)
         orders = await order_service.get_all(db_session, user_id=id)
         user_data = asdict(user)

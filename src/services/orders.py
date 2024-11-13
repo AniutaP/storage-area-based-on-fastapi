@@ -11,15 +11,19 @@ class OrderService:
     def __init__(self, repository: OrderRepository):
         self.repository = repository
 
-    async def check_quantity_product(self, order: OrderDTO, db_session: AsyncSession) -> bool:
+    async def check_quantity_product(
+            self, order: OrderDTO, db_session: AsyncSession
+    ) -> bool:
         from src.depends.products import product_service
 
         orderitems = order.orderitems
         for orderitem in orderitems:
-            product_model = await product_service.get_by_id(orderitem.product_id, db_session)
+            product_model = await product_service.get_by_id(
+                orderitem.product_id, db_session
+            )
             quantity_product_in_db = product_model.quantity
             if orderitem.quantity > quantity_product_in_db:
-                message = f'Quantity product with id: {orderitem.product_id} exceeds stock availability'
+                message = f'Quantity product with id: {orderitem.product_id} unavailable'
                 hawk.send(HTTPException(422, message))
                 raise HTTPException(422, message)
         return True

@@ -37,7 +37,9 @@ class UserRepository:
             return None
         return UserDTO(**model_to_dict(user))
 
-    async def update_by_id(self, user: UserDTO, db_session: AsyncSession) -> UserDTO | None:
+    async def update_by_id(
+            self, user: UserDTO, db_session: AsyncSession
+    ) -> UserDTO | None:
         user_data = asdict(user)
         user_to_update = await db_session.get(UserModel, user.id)
         for field, value in user_data.items():

@@ -21,7 +21,9 @@ class ProductRepository:
         result = await db_session.scalars(query)
         if not result:
             return []
-        products_to_dto = [ProductDTO(**model_to_dict(product)) for product in result.all()]
+        products_to_dto = [
+            ProductDTO(**model_to_dict(product)) for product in result.all()
+        ]
         return products_to_dto
 
     async def get_by_id(self, id: int, db_session: AsyncSession) -> ProductDTO | None:
@@ -37,7 +39,9 @@ class ProductRepository:
             return None
         return ProductDTO(**model_to_dict(product))
 
-    async def update_by_id(self, product: ProductDTO, db_session: AsyncSession) -> ProductDTO | None:
+    async def update_by_id(
+            self, product: ProductDTO, db_session: AsyncSession
+    ) -> ProductDTO | None:
         product_data = asdict(product)
         product_to_update = await db_session.get(ProductModel, product.id)
         for field, value in product_data.items():

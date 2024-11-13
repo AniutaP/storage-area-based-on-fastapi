@@ -3,7 +3,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.depends.users import get_current_user
 from src.services.orders import OrderService
-from src.schemas.orders import OrderAddSchema, OrderSchema, OrderStatusUpdateSchema, OrderIdSchema
+from src.schemas.orders import (
+    OrderAddSchema, OrderSchema, OrderStatusUpdateSchema, OrderIdSchema
+)
 from src.depends.orders import get_order_service
 from src.depends.database import get_db_session
 from src.dto.orders import OrderDTO, OrderItemDTO
@@ -29,7 +31,9 @@ async def create_order(
 
     data = order.model_dump()
     orderitems = [OrderItemDTO(**item_data) for item_data in data['orderitems']]
-    order_dto = OrderDTO(status=order.status, user_id=current_user.id, orderitems=orderitems)
+    order_dto = OrderDTO(
+        status=order.status, user_id=current_user.id, orderitems=orderitems
+    )
     new_order = await order_service.create(order=order_dto, db_session=db_session)
     return OrderSchema.model_validate(new_order)
 
@@ -67,5 +71,7 @@ async def update_status_by_id(
 
     data = order.model_dump()
     order_dto = OrderDTO(**data)
-    order_to_update = await order_service.update_status_by_id(order=order_dto, db_session=db_session)
+    order_to_update = await order_service.update_status_by_id(
+        order=order_dto, db_session=db_session
+    )
     return OrderStatusUpdateSchema.model_validate(order_to_update)
