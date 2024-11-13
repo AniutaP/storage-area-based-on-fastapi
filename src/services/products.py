@@ -7,6 +7,7 @@ from src.repositories.products import ProductRepository
 
 
 class ProductService:
+
     def __init__(self, repository: ProductRepository):
         self.repository = repository
 

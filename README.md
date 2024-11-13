@@ -37,6 +37,10 @@ POSTGRES_HOST=database
 
 POSTGRES_PORT=5432
 
+ADMIN_EMAIL=admin_email
+
+ADMIN_PASSWORD=admin_password
+
 `CTRL + D`
 
 * #### start docker command 
