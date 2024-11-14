@@ -61,7 +61,9 @@ async def get_total_order_sum_by_user_id(
         db_session: AsyncSession = Depends(get_db_session)
 ):
     user_id = user.model_dump().get('id')
-    user = await order_service.get_total_order_sum_by_user_id(user_id, db_session)
+    user = await order_service.get_total_order_sum_by_user_id(
+        id=user_id, db_session=db_session
+    )
     return UserIdTotalSchema.model_validate(user)
 
 

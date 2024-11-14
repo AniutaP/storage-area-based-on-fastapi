@@ -93,24 +93,24 @@ class OrderRepository:
         ]
         return order_to_dto
 
-    async def get_total_order_sum_by_user_id(
-            self, user_id: int, db_session: AsyncSession
+    async def get_total_order_sum_by_id(
+            self, id: int, db_session: AsyncSession
     ) -> dict:
         query = select(
-            OrderModel.user_id, func.sum(
+            OrderModel.id, func.sum(
                 OrderItemModel.quantity * ProductModel.price
             ).label('total')
         ).where(
-            OrderModel.user_id == user_id
+            OrderModel.id == id
         ).join(
             OrderItemModel, and_(OrderModel.id == OrderItemModel.order_id)
         ).join(
             ProductModel, and_(OrderItemModel.product_id == ProductModel.id)
-        ).group_by(OrderModel.user_id)
+        ).group_by(OrderModel.id)
 
         result = await db_session.execute(query)
         total = result.one_or_none()[1]
-        data = {'id': user_id, 'total': total}
+        data = {'id': id, 'total': total}
         return data
 
     async def update_status_by_id(
