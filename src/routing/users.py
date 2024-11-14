@@ -6,7 +6,9 @@ from src.depends.orders import get_order_service
 from src.domains.orders.service import OrderService
 from src.domains.users.service import UserService
 from src.domains.users.schemas.users import (
-    UserAddSchema, UserSchema, UserUpdateSchema, UserWithOrdersSchema, UserIdSchema
+    UserAddSchema, UserSchema,
+    UserUpdateSchema, UserWithOrdersSchema,
+    UserIdSchema, UserIdTotalSchema
 )
 from src.domains.users.schemas.users import DeleteSchema
 from src.depends.users import get_user_service, get_current_user
@@ -50,6 +52,17 @@ async def get_by_id(
     id = user.model_dump().get('id')
     user = await user_service.get_by_id(id=id, db_session=db_session)
     return UserSchema.model_validate(user)
+
+
+@router.get('/{id}/total', response_model=UserIdTotalSchema)
+async def get_total_order_sum_by_user_id(
+        user: UserIdSchema = Depends(),
+        order_service: OrderService = Depends(get_order_service),
+        db_session: AsyncSession = Depends(get_db_session)
+):
+    user_id = user.model_dump().get('id')
+    user = await order_service.get_total_order_sum_by_user_id(user_id, db_session)
+    return UserIdTotalSchema.model_validate(user)
 
 
 @router.get("/{id}/orders", response_model=UserWithOrdersSchema)

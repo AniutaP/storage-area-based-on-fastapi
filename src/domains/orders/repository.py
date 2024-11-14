@@ -1,4 +1,4 @@
-from sqlalchemy import select, desc
+from sqlalchemy import select, desc, func, and_
 from sqlalchemy.orm import joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.core.database.models.orders import OrderModel, OrderItemModel
@@ -80,10 +80,10 @@ class OrderRepository:
     async def get_by_id(
             self, id: int, db_session: AsyncSession
     ) -> OrderDTO | None:
-        query = select(OrderModel).where(OrderModel.id == id)
-        result = await db_session.scalar(
-            query.options(joinedload(OrderModel.orderitems))
+        query = select(OrderModel).where(OrderModel.id == id).options(
+            joinedload(OrderModel.orderitems)
         )
+        result = await db_session.scalar(query)
         if not result:
             return None
 
@@ -92,6 +92,26 @@ class OrderRepository:
             OrderItemDTO(**model_to_dict(item)) for item in result.orderitems
         ]
         return order_to_dto
+
+    async def get_total_order_sum_by_user_id(
+            self, user_id: int, db_session: AsyncSession
+    ) -> dict:
+        query = select(
+            OrderModel.user_id, func.sum(
+                OrderItemModel.quantity * ProductModel.price
+            ).label('total')
+        ).where(
+            OrderModel.user_id == user_id
+        ).join(
+            OrderItemModel, and_(OrderModel.id == OrderItemModel.order_id)
+        ).join(
+            ProductModel, and_(OrderItemModel.product_id == ProductModel.id)
+        ).group_by(OrderModel.user_id)
+
+        result = await db_session.execute(query)
+        total = result.one_or_none()[1]
+        data = {'id': user_id, 'total': total}
+        return data
 
     async def update_status_by_id(
             self, order: OrderDTO, db_session: AsyncSession

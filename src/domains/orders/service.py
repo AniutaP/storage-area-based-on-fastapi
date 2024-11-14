@@ -44,6 +44,19 @@ class OrderService:
             raise HTTPException(404, message)
         return result
 
+    async def get_total_order_sum_by_user_id(
+            self, user_id: int, db_session: AsyncSession
+    ):
+        from src.depends.users import user_service
+
+        check_user = await user_service.get_by_id(user_id, db_session)
+        if check_user is None:
+            message = f'User with id {id} not found'
+            hawk.send(HTTPException(404, message))
+            raise HTTPException(404, message)
+        result = await self.repository.get_total_order_sum_by_user_id(user_id, db_session)
+        return result
+
     async def update_status_by_id(self, order: OrderDTO, db_session: AsyncSession):
         await self.get_by_id(order.id, db_session)
         return await self.repository.update_status_by_id(order, db_session)
