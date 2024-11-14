@@ -97,19 +97,19 @@ class OrderRepository:
             self, id: int, db_session: AsyncSession
     ) -> dict:
         query = select(
-            OrderModel.id, func.sum(
+            OrderModel.user_id, func.sum(
                 OrderItemModel.quantity * ProductModel.price
             ).label('total')
         ).where(
-            OrderModel.id == id
+            OrderModel.user_id == id
         ).join(
             OrderItemModel, and_(OrderModel.id == OrderItemModel.order_id)
         ).join(
             ProductModel, and_(OrderItemModel.product_id == ProductModel.id)
-        ).group_by(OrderModel.id)
+        ).group_by(OrderModel.user_id)
 
         result = await db_session.execute(query)
-        total = result.one_or_none()[1]
+        total = result.first()[1]
         data = {'id': id, 'total': total}
         return data
 
