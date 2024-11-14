@@ -1,6 +1,8 @@
 from sqlalchemy import select, desc, func, and_
 from sqlalchemy.orm import joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
+from decimal import Decimal
+
 from src.core.database.models.orders import OrderModel, OrderItemModel
 from src.core.database.models.products import ProductModel
 from src.domains.orders.dto.orders import OrderDTO, OrderItemDTO
@@ -109,7 +111,11 @@ class OrderRepository:
         ).group_by(OrderModel.user_id)
 
         result = await db_session.execute(query)
-        total = result.first()[1]
+        result_row = result.one_or_none()
+        if result_row is None:
+            total = Decimal('0.00')
+        else:
+            total = result_row[1]
         data = {'id': id, 'total': total}
         return data
 
