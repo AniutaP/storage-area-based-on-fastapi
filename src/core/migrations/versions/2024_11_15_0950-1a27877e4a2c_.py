@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: edb041fd7763
+Revision ID: 1a27877e4a2c
 Revises: 
-Create Date: 2024-11-11 04:00:03.703095
+Create Date: 2024-11-15 09:50:14.336642
 
 """
 
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "edb041fd7763"
+revision: str = "1a27877e4a2c"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -83,7 +83,7 @@ def upgrade() -> None:
         ),
         sa.PrimaryKeyConstraint("id", name=op.f("pk_orderitems")),
         sa.UniqueConstraint(
-            "order_id", "product_id", name=op.f("uq_orderitems_order_id")
+            "product_id", "order_id", name=op.f("uq_orderitems_product_id")
         ),
     )
     # ### end Alembic commands ###
