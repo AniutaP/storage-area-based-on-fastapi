@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.configs.settings import hawk
 from src.depends.users import get_current_user
 from src.domains.orders.service import OrderService
 from src.domains.orders.schemas.orders import (
@@ -90,5 +91,10 @@ async def delete_by_id(
         raise HTTPException(403, message)
 
     order_id = order.model_dump().get('id')
-    await order_service.delete_by_id(id=order_id, db_session=db_session)
-    return DeleteSchema
+    try:
+        await order_service.delete_by_id(id=order_id, db_session=db_session)
+        return DeleteSchema
+    except Exception:
+        message = "Data cannot be deleted"
+        hawk.send(HTTPException(400, message))
+        raise HTTPException(400, message)
