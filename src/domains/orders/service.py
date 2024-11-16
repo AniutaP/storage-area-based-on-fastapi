@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.configs.settings import hawk
 from src.domains.orders.repository import OrderRepository
-from src.domains.orders.dto.orders import OrderDTO
+from src.domains.orders.dto.orders import OrderDTO, OrderUpdateDTO
 
 
 class OrderService:
@@ -57,9 +57,9 @@ class OrderService:
         result = await self.repository.get_total_order_sum_by_id(id, db_session)
         return result
 
-    async def update_status_by_id(self, order: OrderDTO, db_session: AsyncSession):
+    async def update_status_by_id(self, order: OrderUpdateDTO, db_session: AsyncSession):
         await self.get_by_id(order.id, db_session)
-        return await self.repository.update_status_by_id(order, db_session)
+        return await self.repository.update_by_id(order, db_session)
 
     async def delete_by_id(self, id: int, db_session: AsyncSession) -> None:
         to_delete_dto = await self.get_by_id(id, db_session)

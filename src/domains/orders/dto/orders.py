@@ -17,3 +17,9 @@ class OrderDTO:
     user_id: int | None = None
     created_at: datetime | None = None
     orderitems: list[OrderItemDTO] = field(default_factory=list)
+
+
+@dataclass
+class OrderUpdateDTO:
+    status: str
+    id: int | None = None

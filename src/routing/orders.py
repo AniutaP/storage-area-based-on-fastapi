@@ -9,7 +9,7 @@ from src.domains.orders.schemas.orders import (
 )
 from src.depends.orders import get_order_service
 from src.depends.database import get_db_session
-from src.domains.orders.dto.orders import OrderDTO, OrderItemDTO
+from src.domains.orders.dto.orders import OrderDTO, OrderItemDTO, OrderUpdateDTO
 from src.domains.users.dto.users import UserDTO
 
 
@@ -71,7 +71,7 @@ async def update_status_by_id(
         raise HTTPException(403, message)
 
     data = order.model_dump()
-    order_dto = OrderDTO(**data)
+    order_dto = OrderUpdateDTO(**data)
     order_to_update = await order_service.update_status_by_id(
         order=order_dto, db_session=db_session
     )

@@ -4,8 +4,8 @@ from decimal import Decimal
 
 @dataclass
 class ProductDTO:
+    name: str | None
+    price: Decimal | None
+    quantity: int | None
     id: int | None = None
-    name: str | None = None
     description: str | None = None
-    price: Decimal | None = None
-    quantity: int | None = None

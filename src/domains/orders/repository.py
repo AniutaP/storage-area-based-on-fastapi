@@ -1,3 +1,5 @@
+from dataclasses import asdict
+
 from sqlalchemy import select, desc, func, and_
 from sqlalchemy.orm import joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -123,13 +125,15 @@ class OrderRepository(BaseRepository):
         data = {'id': id, 'total': total}
         return data
 
-    async def update_status_by_id(
+    async def full_update_by_id(
             self, order: OrderDTO, db_session: AsyncSession
     ) -> OrderDTO:
-        order_new_status = order.status
+        to_dict = asdict(order)
         order_to_update = await db_session.get(OrderModel, order.id)
-        if order_new_status:
-            setattr(order_to_update, 'status', order_new_status)
+        if order_to_update:
+            for field, value in to_dict.items():
+                if value:
+                    setattr(order_to_update, field, to_dict[field])
         db_session.add(order_to_update)
         order_to_dto = OrderDTO(**model_to_dict(order_to_update))
         await db_session.commit()
