@@ -60,3 +60,7 @@ class OrderService:
     async def update_status_by_id(self, order: OrderDTO, db_session: AsyncSession):
         await self.get_by_id(order.id, db_session)
         return await self.repository.update_status_by_id(order, db_session)
+
+    async def delete_by_id(self, id: int, db_session: AsyncSession) -> None:
+        to_delete_dto = await self.get_by_id(id, db_session)
+        await self.repository.delete_by_id(to_delete_dto, db_session)

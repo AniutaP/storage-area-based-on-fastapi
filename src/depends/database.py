@@ -15,9 +15,6 @@ async def get_db_session() -> AsyncGenerator:
             message = 'IntegrityError occurred'
             hawk.send(HTTPException(422, message))
             raise HTTPException(422, message)
-        except Exception:
-            hawk.send(Exception("error description"), {"params": "value"})
-            await session.rollback()
-            raise
+
         finally:
             await session.close()

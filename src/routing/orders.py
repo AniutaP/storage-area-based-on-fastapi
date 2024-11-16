@@ -4,7 +4,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.depends.users import get_current_user
 from src.domains.orders.service import OrderService
 from src.domains.orders.schemas.orders import (
-    OrderAddSchema, OrderSchema, OrderStatusUpdateSchema, OrderIdSchema
+    OrderAddSchema, OrderSchema, OrderStatusUpdateSchema,
+    OrderIdSchema, DeleteSchema
 )
 from src.depends.orders import get_order_service
 from src.depends.database import get_db_session
@@ -75,3 +76,19 @@ async def update_status_by_id(
         order=order_dto, db_session=db_session
     )
     return OrderStatusUpdateSchema.model_validate(order_to_update)
+
+
+@router.delete("/{id}", response_model=DeleteSchema)
+async def delete_by_id(
+        order: OrderIdSchema = Depends(),
+        order_service: OrderService = Depends(get_order_service),
+        current_user: UserDTO = Depends(get_current_user),
+        db_session: AsyncSession = Depends(get_db_session)
+):
+    if not current_user.is_superuser:
+        message = "Forbidden: You do not have permission to perform this action"
+        raise HTTPException(403, message)
+
+    order_id = order.model_dump().get('id')
+    await order_service.delete_by_id(id=order_id, db_session=db_session)
+    return DeleteSchema

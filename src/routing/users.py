@@ -6,11 +6,10 @@ from src.depends.orders import get_order_service
 from src.domains.orders.service import OrderService
 from src.domains.users.service import UserService
 from src.domains.users.schemas.users import (
-    UserAddSchema, UserSchema,
-    UserUpdateSchema, UserWithOrdersSchema,
-    UserIdSchema, UserIdTotalSchema
+    UserAddSchema, UserSchema, UserWithOrdersSchema,
+    UserIdSchema, UserIdTotalSchema, DeleteSchema,
+    UserUpdateSchema
 )
-from src.domains.users.schemas.users import DeleteSchema
 from src.depends.users import get_user_service, get_current_user
 from src.depends.database import get_db_session
 from src.domains.users.dto.users import UserDTO
@@ -111,8 +110,13 @@ async def delete_by_id(
 ):
     user_id = user.model_dump().get('id')
     if current_user.id == user_id or current_user.is_superuser:
-        await user_service.delete_by_id(id=user_id, db_session=db_session)
-        return DeleteSchema
+        try:
+            await user_service.delete_by_id(id=user_id, db_session=db_session)
+            return DeleteSchema
+        except Exception:
+            message = "User cannot be deleted"
+            hawk.send(HTTPException(400, message))
+            raise HTTPException(400, message)
 
     message = "Forbidden: You do not have permission to perform this action"
     hawk.send(HTTPException(403, message))

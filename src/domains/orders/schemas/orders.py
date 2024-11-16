@@ -29,3 +29,9 @@ class OrderIdSchema(BaseModel):
 
 class OrderStatusUpdateSchema(OrderIdSchema):
     status: str
+
+
+class DeleteSchema(BaseModel):
+    status_process: str = "Order successfully deleted"
+
+    model_config = ConfigDict(from_attributes=True)

@@ -64,5 +64,5 @@ class UserService:
         return await self.repository.update_by_id(user, db_session)
 
     async def delete_by_id(self, id: int, db_session: AsyncSession):
-        await self.get_by_id(id, db_session)
-        return await self.repository.delete_by_id(id, db_session)
+        to_delete_dto = await self.get_by_id(id, db_session)
+        await self.repository.delete_by_id(to_delete_dto, db_session)

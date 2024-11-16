@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.configs.settings import hawk
 from src.domains.products.service import ProductService
 from src.domains.products.schemas.products import (
-    ProductAddSchema, ProductSchema, ProductUpdateSchema, ProductIdSchema
+    ProductAddSchema, ProductSchema, ProductIdSchema
 )
 from src.domains.products.schemas.products import DeleteSchema
 from src.depends.products import get_product_service
@@ -58,7 +59,7 @@ async def get_by_id(
 
 @router.put("/{id}", response_model=ProductSchema)
 async def update_by_id(
-        product: ProductUpdateSchema = Depends(),
+        product: ProductSchema = Depends(),
         current_user: UserDTO = Depends(get_current_user),
         product_service: ProductService = Depends(get_product_service),
         db_session: AsyncSession = Depends(get_db_session)
@@ -87,5 +88,10 @@ async def delete_by_id(
         raise HTTPException(403, message)
 
     product_id = product.model_dump().get('id')
-    await product_service.delete_by_id(id=product_id, db_session=db_session)
-    return DeleteSchema
+    try:
+        await product_service.delete_by_id(id=product_id, db_session=db_session)
+        return DeleteSchema
+    except Exception:
+        message = "Data cannot be deleted"
+        hawk.send(HTTPException(400, message))
+        raise HTTPException(400, message)

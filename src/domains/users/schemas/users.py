@@ -26,21 +26,16 @@ class UserIdSchema(BaseModel):
     id: int
 
 
+class UserUpdateSchema(UserSchema):
+    password: str = Field(min_length=5)
+
+
 class UserIdTotalSchema(UserIdSchema):
     total: Decimal | None = Field(default=None)
 
 
 class UserWithOrdersSchema(UserSchema):
     orders: List[OrderSchema]
-
-
-class UserUpdateSchema(BaseModel):
-    id: int
-    name: str | None = Field(default=None)
-    email: EmailStr | None = Field(default=None)
-    password: int | None = Field(default=None, min_length=5)
-
-    model_config = ConfigDict(from_attributes=True)
 
 
 class DeleteSchema(BaseModel):

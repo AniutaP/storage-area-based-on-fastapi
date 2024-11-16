@@ -25,7 +25,7 @@ class ProductService:
     async def get_by_id(self, id: int, db_session: AsyncSession):
         result = await self.repository.get_by_id(id, db_session)
         if result is None:
-            message = f'Object with id {id} not found'
+            message = f'Product with id {id} not found'
             hawk.send(HTTPException(404, message))
             raise HTTPException(404, message)
 
@@ -40,5 +40,5 @@ class ProductService:
         return await self.repository.update_by_id(product, db_session)
 
     async def delete_by_id(self, id: int, db_session: AsyncSession):
-        await self.get_by_id(id, db_session)
-        return await self.repository.delete_by_id(id, db_session)
+        to_delete_dto = await self.get_by_id(id, db_session)
+        await self.repository.delete_by_id(to_delete_dto, db_session)

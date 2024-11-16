@@ -8,8 +8,8 @@ class UserDTO:
     name: str | None = None
     email: str | None = None
     password: str | None = None
-    is_superuser: bool | None = None
-    is_active: bool | None = None
+    is_superuser: bool = False
+    is_active: bool = True
 
 
 @dataclass
@@ -20,3 +20,4 @@ class UserWithOrdersDTO(UserDTO):
 @dataclass
 class AdminDTO(UserDTO):
     is_superuser: bool = True
+    is_active: bool = True

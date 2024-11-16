@@ -3,13 +3,17 @@ from sqlalchemy.orm import joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
 from decimal import Decimal
 
+from src.domains.base.repository_base import BaseRepository
 from src.core.database.models.orders import OrderModel, OrderItemModel
 from src.core.database.models.products import ProductModel
 from src.domains.orders.dto.orders import OrderDTO, OrderItemDTO
 from src.utils.db_utils import model_to_dict
 
 
-class OrderRepository:
+class OrderRepository(BaseRepository):
+
+    def __init__(self):
+        super().__init__(OrderModel, OrderDTO)
 
     async def create(self, order: OrderDTO, db_session: AsyncSession) -> OrderDTO:
         status, user_id, orderitems = order.status, order.user_id, order.orderitems
