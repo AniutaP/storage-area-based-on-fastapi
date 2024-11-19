@@ -51,7 +51,7 @@ class BaseRepository:
         await db_session.commit()
         return model_dto
 
-    async def delete_by_id(self, model_dto, db_session: AsyncSession) -> None:
+    async def delete_by_id(self, model_dto: DTO, db_session: AsyncSession) -> None:
         query = delete(
             self.SQLModel
         ).where(self.SQLModel.id == model_dto.id)  # type: ignore
