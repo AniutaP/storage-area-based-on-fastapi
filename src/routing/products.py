@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -91,7 +93,7 @@ async def delete_by_id(
     try:
         await product_service.delete_by_id(id=product_id, db_session=db_session)
         return DeleteSchema
-    except Exception:
-        message = "Data cannot be deleted"
-        hawk.send(HTTPException(400, message))
-        raise HTTPException(400, message)
+    except Exception as exc:
+        logging.exception(exc)
+        hawk.send(exc)
+        raise exc

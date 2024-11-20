@@ -113,10 +113,9 @@ async def delete_by_id(
         try:
             await user_service.delete_by_id(id=user_id, db_session=db_session)
             return DeleteSchema
-        except Exception:
-            message = "User cannot be deleted"
-            hawk.send(HTTPException(400, message))
-            raise HTTPException(400, message)
+        except Exception as exc:
+            hawk.send(exc)
+            raise exc
 
     message = "Forbidden: You do not have permission to perform this action"
     hawk.send(HTTPException(403, message))

@@ -94,7 +94,6 @@ async def delete_by_id(
     try:
         await order_service.delete_by_id(id=order_id, db_session=db_session)
         return DeleteSchema
-    except Exception:
-        message = "Data cannot be deleted"
-        hawk.send(HTTPException(400, message))
-        raise HTTPException(400, message)
+    except Exception as exc:
+        hawk.send(exc)
+        raise exc
