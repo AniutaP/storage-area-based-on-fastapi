@@ -5,7 +5,6 @@ from typing import TypeVar
 
 from src.utils.db_utils import model_to_dict
 
-
 DTO = TypeVar('DTO')
 
 

@@ -9,7 +9,7 @@ from src.domains.base.repository_base import BaseRepository
 from src.core.database.models.orders import OrderModel, OrderItemModel
 from src.core.database.models.products import ProductModel
 from src.domains.orders.dto.orders import OrderDTO, OrderItemDTO
-from src.utils.db_utils import model_to_dict
+from src.utils.db_utils import model_to_dict, set_isolation_level, IsolationLevels
 
 
 class OrderRepository(BaseRepository):
@@ -17,6 +17,7 @@ class OrderRepository(BaseRepository):
     def __init__(self):
         super().__init__(OrderModel, OrderDTO)
 
+    @set_isolation_level(isolation_level=IsolationLevels.s)
     async def create(self, order: OrderDTO, db_session: AsyncSession) -> OrderDTO:
         status, user_id, orderitems = order.status, order.user_id, order.orderitems
         new_order = OrderModel(status=status, user_id=user_id)
@@ -125,6 +126,7 @@ class OrderRepository(BaseRepository):
         data = {'id': id, 'total': total}
         return data
 
+    @set_isolation_level(isolation_level=IsolationLevels.s)
     async def full_update_by_id(
             self, order: OrderDTO, db_session: AsyncSession
     ) -> OrderDTO:
