@@ -21,7 +21,7 @@ router = APIRouter(
 )
 
 
-@router.post("/", response_model=UserSchema)
+@router.post("/register", response_model=UserSchema)
 async def create(
         user: UserAddSchema = Depends(),
         user_service: UserService = Depends(get_user_service),

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi import HTTPException
 
@@ -18,7 +18,8 @@ router = APIRouter(
 
 
 @router.post("/token", response_model=TokenSchema)
-async def login_for_access_token(
+async def authenticate_user(
+        response: Response,
         form_data: OAuth2PasswordRequestForm = Depends(),
         user_service: UserService = Depends(get_user_service),
         db_session: AsyncSession = Depends(get_db_session)
@@ -33,4 +34,5 @@ async def login_for_access_token(
 
     token_payload_dto = TokenPayloadDTO(sub=user.email)
     access_token = create_access_token(token_payload_dto)
+    response.set_cookie(key='user_token', value=access_token, httponly=True)
     return TokenSchema(access_token=access_token, token_type="bearer")
