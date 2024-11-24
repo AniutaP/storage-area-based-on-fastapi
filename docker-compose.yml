@@ -7,18 +7,46 @@ services:
     volumes:
       - database_data:/var/lib/postgresql/data
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.0
+    ports:
+      - "9200:9200"
+    environment:
+      - discovery.type=single-node
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.15.0
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+
+  filebeat:
+    build:
+      context: ./filebeat
+    container_name: filebeat
+    volumes:
+      - ./fastapi-logs:/app/logs
+    depends_on:
+      - elasticsearch
+      - kibana
+
   web:
     build: .
     command: uvicorn src:app --host 0.0.0.0 --port 8000 --reload
     restart: always
     volumes:
-      - .:/src
+      - ./src
+      - ./fastapi-logs:/app/logs
     ports:
       - "8000:8000"
     env_file:
       - ./.env
     depends_on:
       - database
+      - elasticsearch
 
 volumes:
   database_data:
+  elasticsearch_data:
+    driver: local
