@@ -12,9 +12,9 @@ filebeat.inputs:
   paths:
     - /app/logs/fastapi*
   fields:
-    - service: src
+    - service: web
   fields_under_root: true
 
 output.elasticsearch:
   hosts: ["elasticsearch:9200"]
-  index: "src"
+  index: "fastapi"
