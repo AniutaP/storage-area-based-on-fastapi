@@ -7,7 +7,7 @@ from src.routing import get_all_routes
 app = FastAPI()
 
 logging.basicConfig(
-    filename='logs/info.log',
+    filename='info.log',
     level=logging.INFO,
     filemode='w',
     format="%(asctime)s - %(levelname)s - %(funcName)s: %(lineno)d - %(message)s",
