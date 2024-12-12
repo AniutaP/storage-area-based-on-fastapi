@@ -17,4 +17,5 @@ class UserRepository(BaseRepository):
         user = await db_session.scalar(query)
         if not user:
             return None
+        await db_session.commit()
         return UserDTO(**model_to_dict(user))

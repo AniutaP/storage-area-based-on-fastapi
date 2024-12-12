@@ -36,6 +36,7 @@ class BaseRepository:
         result = await db_session.get(self.SQLModel, id)
         if not result:
             return None
+        await db_session.commit()
         return self.DTO(**model_to_dict(result))
 
     async def update_by_id(
